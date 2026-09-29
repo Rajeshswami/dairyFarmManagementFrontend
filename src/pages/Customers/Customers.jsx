@@ -136,11 +136,12 @@ export default function Customers() {
     .split("-")
     .map(Number);
 
-  const [recordYear, setRecordYear] =
-    useState(initialYear);
+  const [recordDate, setRecordDate] = useState({
+    year: initialYear,
+    month: initialMonth,
+  });
 
-  const [recordMonth, setRecordMonth] =
-    useState(initialMonth);
+  const { year: recordYear, month: recordMonth } = recordDate;
 
   const [monthlyRecords, setMonthlyRecords] =
     useState([]);
@@ -299,8 +300,7 @@ export default function Customers() {
       .split("-")
       .map(Number);
 
-    setRecordYear(year);
-    setRecordMonth(month);
+    setRecordDate({ year, month });
 
     setMonthlyRecords([]);
     setMonthlyError("");
@@ -319,10 +319,9 @@ export default function Customers() {
       setMonthlyLoading(true);
       setMonthlyError("");
 
-      const dates = createMonthDays(
-        recordYear,
-        recordMonth
-      );
+      const requestYear = recordYear;
+      const requestMonth = recordMonth;
+      const dates = createMonthDays(requestYear, requestMonth);
 
       /*
        * The existing Milk Delivery API supports
@@ -334,25 +333,26 @@ export default function Customers() {
        */
 
       const responses = await Promise.all(
-        dates.map((date) =>
-          getMilkDeliveriesApi({
-            date,
-          })
-        )
+        dates.map((date) => getMilkDeliveriesApi({ date }))
       );
+
+      if (requestYear !== recordDate.year || requestMonth !== recordDate.month) return;
 
       const records = dates.map(
         (date, index) => {
           const response = responses[index];
 
-          const deliveries = Array.isArray(
-            response
-          )
+          const deliveries = Array.isArray(response)
             ? response
             : response?.deliveries || [];
 
+          const deliveriesForDate = deliveries.filter((delivery) => {
+            if (!delivery?.date) return true;
+            return String(delivery.date).slice(0, 10) === date;
+          });
+
           const customerDelivery =
-            deliveries.find((delivery) => {
+            deliveriesForDate.find((delivery) => {
               const deliveryCustomerId =
                 delivery.customerId?._id ||
                 delivery.customerId ||
@@ -429,35 +429,19 @@ export default function Customers() {
   // ---------------------------------------------------------
 
   const handlePreviousMonth = () => {
-    if (recordMonth === 1) {
-      setRecordYear(
-        (current) => current - 1
-      );
-
-      setRecordMonth(12);
-    } else {
-      setRecordMonth(
-        (current) => current - 1
-      );
-    }
+    setRecordDate((current) =>
+      current.month === 1
+        ? { year: current.year - 1, month: 12 }
+        : { year: current.year, month: current.month - 1 }
+    );
   };
 
-  // ---------------------------------------------------------
-  // Next month
-  // ---------------------------------------------------------
-
   const handleNextMonth = () => {
-    if (recordMonth === 12) {
-      setRecordYear(
-        (current) => current + 1
-      );
-
-      setRecordMonth(1);
-    } else {
-      setRecordMonth(
-        (current) => current + 1
-      );
-    }
+    setRecordDate((current) =>
+      current.month === 12
+        ? { year: current.year + 1, month: 1 }
+        : { year: current.year, month: current.month + 1 }
+    );
   };
 
   // ---------------------------------------------------------

@@ -72,8 +72,8 @@ export default function CustomerMonthlyRecords({
     .split("-")
     .map(Number);
 
-  const [year, setYear] = useState(initialYear);
-  const [month, setMonth] = useState(initialMonth);
+  const [selectedMonth, setSelectedMonth] = useState({ year: initialYear, month: initialMonth });
+  const { year, month } = selectedMonth;
 
   const [records, setRecords] = useState([]);
 
@@ -92,11 +92,13 @@ export default function CustomerMonthlyRecords({
        * by date. We fetch each day of the selected month
        * and keep only this customer's record.
        */
+      const requestYear = year;
+      const requestMonth = month;
       const responses = await Promise.all(
-        dates.map((date) =>
-          getMilkDeliveriesApi({ date })
-        )
+        dates.map((date) => getMilkDeliveriesApi({ date }))
       );
+
+      if (requestYear !== selectedMonth.year || requestMonth !== selectedMonth.month) return;
 
       const monthlyRecords = dates.map((date, index) => {
         const response = responses[index];
@@ -105,7 +107,12 @@ export default function CustomerMonthlyRecords({
           ? response
           : response?.deliveries || [];
 
-        const customerDelivery = deliveries.find(
+        const deliveriesForDate = deliveries.filter((delivery) => {
+          if (!delivery?.date) return true;
+          return String(delivery.date).slice(0, 10) === date;
+        });
+
+        const customerDelivery = deliveriesForDate.find(
           (delivery) => {
             const deliveryCustomerId =
               delivery.customerId?._id ||
@@ -163,21 +170,19 @@ export default function CustomerMonthlyRecords({
   }, [year, month, customer._id]);
 
   const goPreviousMonth = () => {
-    if (month === 1) {
-      setYear((current) => current - 1);
-      setMonth(12);
-    } else {
-      setMonth((current) => current - 1);
-    }
+    setSelectedMonth((current) =>
+      current.month === 1
+        ? { year: current.year - 1, month: 12 }
+        : { year: current.year, month: current.month - 1 }
+    );
   };
 
   const goNextMonth = () => {
-    if (month === 12) {
-      setYear((current) => current + 1);
-      setMonth(1);
-    } else {
-      setMonth((current) => current + 1);
-    }
+    setSelectedMonth((current) =>
+      current.month === 12
+        ? { year: current.year + 1, month: 1 }
+        : { year: current.year, month: current.month + 1 }
+    );
   };
 
   const summary = useMemo(() => {

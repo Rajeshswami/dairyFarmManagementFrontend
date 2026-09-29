@@ -20,13 +20,19 @@ import {
 
 import { getActiveCustomersApi } from "../../api/customers.api";
 
-const QUANTITIES = [
-  { value: 0, label: "0" },
-  { value: 0.25, label: "¼ L" },
-  { value: 0.5, label: "½ L" },
-  { value: 0.75, label: "¾ L" },
-  { value: 1, label: "1 L" },
-];
+// Milk delivery quantity options: 0 to 10 litres in 0.25 L steps.
+const QUANTITIES = Array.from({ length: 41 }, (_, index) => {
+  const value = index * 0.25;
+
+  let label;
+  if (value === 0) label = "0";
+  else if (value === 0.25) label = "¼ L";
+  else if (value === 0.5) label = "½ L";
+  else if (value === 0.75) label = "¾ L";
+  else label = `${value.toFixed(2).replace(/\.00$/, "")} L`;
+
+  return { value, label };
+});
 
 const formatLiters = (value) => `${Number(value || 0).toFixed(2)} L`;
 
