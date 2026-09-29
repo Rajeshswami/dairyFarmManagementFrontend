@@ -1,7 +1,21 @@
+/* =========================================================
+   Global
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body,
 #root {
   min-height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -13,17 +27,37 @@ body {
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
+  color: #111827;
+  overflow-x: hidden;
 }
 
-/* Login */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+/* Better touch targets on phones without changing desktop sizing. */
+.btn {
+  touch-action: manipulation;
+}
+
+/* =========================================================
+   Login
+   ========================================================= */
 
 .login-page {
   min-height: 100vh;
-
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
-
   padding: 20px;
 }
 
@@ -32,44 +66,44 @@ body {
   max-width: 420px;
 }
 
-/* Application */
+/* =========================================================
+   Application shell
+   ========================================================= */
 
 .app-layout {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
 }
 
 .sidebar {
   width: 250px;
   min-height: 100vh;
-
+  min-height: 100dvh;
   background: #1f2937;
   color: white;
-
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
-
   overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1040;
+  -webkit-overflow-scrolling: touch;
 }
 
 .sidebar-brand {
-  height: 75px;
-
+  min-height: 75px;
   display: flex;
   align-items: center;
-
   gap: 12px;
-
   padding: 15px 20px;
-
-  border-bottom: 1px solid
-    rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .brand-icon {
   font-size: 30px;
+  flex: 0 0 auto;
 }
 
 .brand-title {
@@ -88,17 +122,11 @@ body {
 
 .sidebar-link {
   display: block;
-
   color: rgba(255, 255, 255, 0.75);
-
   text-decoration: none;
-
-  padding: 11px 15px;
-
+  padding: 12px 15px;
   border-radius: 7px;
-
   margin-bottom: 4px;
-
   transition: 0.2s;
 }
 
@@ -112,42 +140,69 @@ body {
   color: white;
 }
 
+.sidebar-close-button {
+  display: none;
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: white;
+  font-size: 30px;
+  line-height: 1;
+  padding: 4px 8px;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
 .main-area {
   margin-left: 250px;
   width: calc(100% - 250px);
-
+  min-width: 0;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .app-header {
-  height: 75px;
-
+  min-height: 75px;
   background: white;
-
   border-bottom: 1px solid #e5e7eb;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  padding: 0 30px;
-
+  gap: 16px;
+  padding: 12px 30px;
   position: sticky;
   top: 0;
+  z-index: 1020;
+}
 
-  z-index: 10;
+.header-left {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.header-title {
+  min-width: 0;
+}
+
+.header-title h5 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-user {
   display: flex;
   align-items: center;
   gap: 18px;
+  flex: 0 0 auto;
 }
 
 .user-info {
   display: flex;
   flex-direction: column;
-
   text-align: right;
 }
 
@@ -156,15 +211,42 @@ body {
   font-size: 12px;
 }
 
+.mobile-menu-button {
+  display: none;
+  width: 42px;
+  height: 42px;
+  margin-right: 10px;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobile-menu-button span {
+  width: 20px;
+  height: 2px;
+  background: #374151;
+  border-radius: 2px;
+}
+
 .page-content {
   padding: 30px;
+  min-width: 0;
+}
+
+.page-content > .container-fluid {
+  min-width: 0;
 }
 
 .page-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
+  gap: 16px;
   margin-bottom: 30px;
 }
 
@@ -186,85 +268,168 @@ body {
   font-weight: 600;
 }
 
-/* Statistics */
+/* =========================================================
+   Cards / stats / forms
+   ========================================================= */
+
+.card {
+  max-width: 100%;
+}
+
+.card-body {
+  min-width: 0;
+}
 
 .stat-card {
   background: white;
-
   border: 1px solid #e5e7eb;
-
   border-radius: 10px;
-
   padding: 20px;
-
   height: 100%;
-
-  box-shadow:
-    0 1px 2px
-    rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .stat-title {
   color: #6b7280;
-
   font-size: 14px;
-
   margin-bottom: 10px;
 }
 
 .stat-value {
   font-size: 26px;
-
   font-weight: 700;
-
   color: #111827;
+  overflow-wrap: anywhere;
 }
 
 .stat-subtitle {
   margin-top: 5px;
-
   font-size: 13px;
-
   color: #6b7280;
 }
 
 .page-loading {
   min-height: 300px;
-
   display: flex;
-
   align-items: center;
   justify-content: center;
-
   gap: 12px;
 }
 
-/* Mobile */
+/* Forms are easier to use with touch. */
+.form-control,
+.form-select {
+  min-height: 40px;
+}
 
-@media (max-width: 768px) {
+textarea.form-control {
+  min-height: 90px;
+}
+
+/* =========================================================
+   Tables
+   ========================================================= */
+
+/* Bootstrap's responsive tables are already used throughout the app.
+   These rules make every table safe on narrow Android screens. */
+.table-responsive {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive > .table {
+  margin-bottom: 0;
+  min-width: 650px;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+}
+
+/* Some pages use a table directly inside Card.Body. */
+.card-body:has(> .table) {
+  overflow-x: auto;
+}
+
+/* Keep action controls together instead of squeezing them. */
+.table .btn {
+  white-space: nowrap;
+}
+
+/* =========================================================
+   Modals
+   ========================================================= */
+
+.modal-content {
+  max-width: 100%;
+}
+
+.modal-body {
+  min-width: 0;
+}
+
+.modal-dialog {
+  max-width: calc(100vw - 2rem);
+}
+
+/* =========================================================
+   Mobile / Android
+   ========================================================= */
+
+@media (max-width: 991.98px) {
   .sidebar {
-    width: 210px;
+    width: min(280px, 86vw);
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.18);
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-close-button {
+    display: block;
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1030;
+    border: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.45);
+    cursor: pointer;
   }
 
   .main-area {
-    margin-left: 210px;
-    width: calc(100% - 210px);
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .mobile-menu-button {
+    display: inline-flex;
   }
 
   .app-header {
-    padding: 0 15px;
+    min-height: 64px;
+    padding: 10px 16px;
   }
 
   .page-content {
-    padding: 20px;
+    padding: 20px 16px;
   }
 
   .page-heading {
     align-items: flex-start;
-
     flex-direction: column;
-
-    gap: 15px;
+    gap: 12px;
+    margin-bottom: 20px;
   }
 
   .dashboard-filters {
@@ -274,5 +439,208 @@ body {
   .dashboard-filters select {
     flex: 1;
     width: auto;
+    min-width: 0;
+  }
+
+  .modal-dialog {
+    margin: 0.5rem auto;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .login-page {
+    padding: 14px;
+    align-items: flex-start;
+    padding-top: 7vh;
+  }
+
+  .login-card {
+    max-width: 100%;
+  }
+
+  .header-title h5 {
+    font-size: 16px;
+  }
+
+  .header-title small {
+    display: none;
+  }
+
+  .header-user {
+    gap: 8px;
+  }
+
+  .user-info {
+    text-align: left;
+    max-width: 100px;
+  }
+
+  .user-info strong {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+
+  .user-info small {
+    font-size: 10px;
+  }
+
+  .logout-button {
+    min-height: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .page-content {
+    padding: 16px 12px;
+  }
+
+  .page-content h2 {
+    font-size: 22px;
+  }
+
+  .page-content h5 {
+    font-size: 17px;
+  }
+
+  .card-body {
+    padding: 14px;
+  }
+
+  .card-body.p-0 {
+    padding: 0 !important;
+  }
+
+  .row.g-3 {
+    --bs-gutter-y: 0.75rem;
+    --bs-gutter-x: 0.75rem;
+  }
+
+  .btn {
+    min-height: 42px;
+  }
+
+  .btn-sm {
+    min-height: 38px;
+  }
+
+  .form-control,
+  .form-select {
+    min-height: 44px;
+  }
+
+  .form-check-input {
+    width: 1.15em;
+    height: 1.15em;
+  }
+
+  .table-responsive > .table {
+    min-width: 680px;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px 9px;
+    white-space: nowrap;
+  }
+
+  .modal-dialog {
+    max-width: calc(100vw - 1rem);
+    margin: 0.5rem auto;
+  }
+
+  .modal-body {
+    padding: 14px;
+  }
+
+  /* Common action/filter rows should wrap instead of overflowing. */
+  .d-flex.justify-content-between,
+  .d-flex.justify-content-end {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Search/filter controls should use the available phone width. */
+  .input-group,
+  .dashboard-filters,
+  .page-content .row > [class*="col-"] {
+    min-width: 0;
+  }
+
+  /* Long text should never push the viewport horizontally. */
+  .text-muted,
+  .alert,
+  .card,
+  .card-body,
+  .container-fluid {
+    overflow-wrap: anywhere;
+  }
+
+  /* Export/action button groups remain usable on small screens. */
+  .btn-group {
+    flex-wrap: wrap;
+  }
+
+  /* Month/date navigation stacks cleanly. */
+  .mobile-stack {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .app-header {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .mobile-menu-button {
+    width: 40px;
+    height: 40px;
+    margin-right: 8px;
+  }
+
+  .header-user {
+    gap: 5px;
+  }
+
+  .user-info {
+    max-width: 78px;
+  }
+
+  .user-info strong {
+    max-width: 78px;
+  }
+
+  .logout-button {
+    font-size: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .page-content {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .card-body {
+    padding: 12px;
+  }
+
+  .table-responsive > .table {
+    min-width: 620px;
+  }
+}
+
+/* Respect users who prefer less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
   }
 }

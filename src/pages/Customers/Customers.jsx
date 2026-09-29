@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 
 import {
   Alert,
@@ -10,7 +10,7 @@ import {
   Row,
   Spinner,
   Table,
-} from 'react-bootstrap';
+} from "react-bootstrap";
 
 import {
   activateCustomerApi,
@@ -18,43 +18,149 @@ import {
   deactivateCustomerApi,
   getCustomersApi,
   updateCustomerApi,
-} from '../../api/customers.api';
+} from "../../api/customers.api";
 
-import CustomerForm from './CustomerForm';
+import {
+  getMilkDeliveriesApi,
+} from "../../api/milkDelivery.api";
 
-import { useAuth } from '../../context/AuthContext';
+import CustomerForm from "./CustomerForm";
+
+import { useAuth } from "../../context/AuthContext";
+
+const FARM_TIMEZONE = "Asia/Kolkata";
+
+const getFarmToday = () => {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: FARM_TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+};
+
+const formatLiters = (value) => {
+  const quantity = Number(value || 0);
+
+  if (quantity === 0) {
+    return "-";
+  }
+
+  return `${quantity.toFixed(2)} L`;
+};
+
+const formatQuantity = (value) => {
+  const quantity = Number(value || 0);
+
+  if (quantity === 0) {
+    return "-";
+  }
+
+  return `${quantity} L`;
+};
+
+const getDaysInMonth = (year, month) => {
+  return new Date(year, month, 0).getDate();
+};
+
+const createMonthDays = (year, month) => {
+  const daysInMonth = getDaysInMonth(year, month);
+
+  return Array.from(
+    { length: daysInMonth },
+    (_, index) => {
+      const day = String(index + 1).padStart(2, "0");
+      const monthValue = String(month).padStart(2, "0");
+
+      return `${year}-${monthValue}-${day}`;
+    }
+  );
+};
+
+const formatDisplayDate = (dateString) => {
+  const [year, month, day] = dateString
+    .split("-")
+    .map(Number);
+
+  return new Date(
+    year,
+    month - 1,
+    day
+  ).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+  });
+};
+
+const formatMonth = (year, month) => {
+  return new Date(
+    year,
+    month - 1,
+    1
+  ).toLocaleDateString("en-IN", {
+    month: "long",
+    year: "numeric",
+  });
+};
 
 export default function Customers() {
   const { user } = useAuth();
 
-  const [customers, setCustomers] =
-    useState([]);
+  const [customers, setCustomers] = useState([]);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
   const [formLoading, setFormLoading] =
     useState(false);
 
-  const [error, setError] =
-    useState('');
+  const [error, setError] = useState("");
 
-  const [search, setSearch] =
-    useState('');
+  const [search, setSearch] = useState("");
 
-  const [showForm, setShowForm] =
-    useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   const [editingCustomer, setEditingCustomer] =
     useState(null);
 
+  // Selected customer for monthly records
+  const [selectedCustomer, setSelectedCustomer] =
+    useState(null);
+
+  // ---------------------------------------------------------
+  // Monthly customer milk records
+  // ---------------------------------------------------------
+
+  const today = getFarmToday();
+
+  const [initialYear, initialMonth] = today
+    .split("-")
+    .map(Number);
+
+  const [recordYear, setRecordYear] =
+    useState(initialYear);
+
+  const [recordMonth, setRecordMonth] =
+    useState(initialMonth);
+
+  const [monthlyRecords, setMonthlyRecords] =
+    useState([]);
+
+  const [monthlyLoading, setMonthlyLoading] =
+    useState(false);
+
+  const [monthlyError, setMonthlyError] =
+    useState("");
+
+  // ---------------------------------------------------------
+  // Load customers
+  // ---------------------------------------------------------
+
   const loadCustomers = async () => {
     try {
       setLoading(true);
-      setError('');
+      setError("");
 
-      const data =
-        await getCustomersApi();
+      const data = await getCustomersApi();
 
       setCustomers(
         Array.isArray(data)
@@ -63,13 +169,13 @@ export default function Customers() {
       );
     } catch (error) {
       console.error(
-        'Customers error:',
+        "Customers error:",
         error
       );
 
       setError(
         error.response?.data?.message ||
-          'Failed to load customers'
+          "Failed to load customers"
       );
     } finally {
       setLoading(false);
@@ -80,32 +186,43 @@ export default function Customers() {
     loadCustomers();
   }, []);
 
-  const filteredCustomers =
-    useMemo(() => {
-      const value =
-        search.trim().toLowerCase();
+  // ---------------------------------------------------------
+  // Filter customers
+  // ---------------------------------------------------------
 
-      if (!value) {
-        return customers;
-      }
+  const filteredCustomers = useMemo(() => {
+    const value =
+      search.trim().toLowerCase();
 
-      return customers.filter(
-        (customer) =>
-          customer.name
-            ?.toLowerCase()
-            .includes(value) ||
-          customer.mobile
-            ?.toLowerCase()
-            .includes(value) ||
-          customer.address
-            ?.toLowerCase()
-            .includes(value)
-      );
-    }, [customers, search]);
+    if (!value) {
+      return customers;
+    }
+
+    return customers.filter(
+      (customer) =>
+        customer.name
+          ?.toLowerCase()
+          .includes(value) ||
+        customer.mobile
+          ?.toLowerCase()
+          .includes(value) ||
+        customer.address
+          ?.toLowerCase()
+          .includes(value)
+    );
+  }, [customers, search]);
+
+  // ---------------------------------------------------------
+  // Permissions
+  // ---------------------------------------------------------
 
   const canManage =
-    user?.role === 'ADMIN' ||
-    user?.role === 'MANAGER';
+    user?.role === "ADMIN" ||
+    user?.role === "MANAGER";
+
+  // ---------------------------------------------------------
+  // Customer actions
+  // ---------------------------------------------------------
 
   const handleAdd = () => {
     setEditingCustomer(null);
@@ -131,6 +248,14 @@ export default function Customers() {
       }
 
       await loadCustomers();
+
+      setShowForm(false);
+      setEditingCustomer(null);
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          "Failed to save customer"
+      );
     } finally {
       setFormLoading(false);
     }
@@ -140,7 +265,7 @@ export default function Customers() {
     customer
   ) => {
     try {
-      setError('');
+      setError("");
 
       if (customer.active) {
         await deactivateCustomerApi(
@@ -156,20 +281,559 @@ export default function Customers() {
     } catch (error) {
       setError(
         error.response?.data?.message ||
-          'Failed to update customer status'
+          "Failed to update customer status"
       );
     }
   };
 
-  const formatQuantity = (value) => {
-    const quantity = Number(value || 0);
+  // ---------------------------------------------------------
+  // Open monthly customer records
+  // ---------------------------------------------------------
 
-    if (quantity === 0) {
-      return '-';
+  const handleViewRecords = (customer) => {
+    setSelectedCustomer(customer);
+
+    const currentDate = getFarmToday();
+
+    const [year, month] = currentDate
+      .split("-")
+      .map(Number);
+
+    setRecordYear(year);
+    setRecordMonth(month);
+
+    setMonthlyRecords([]);
+    setMonthlyError("");
+  };
+
+  // ---------------------------------------------------------
+  // Load selected customer's monthly records
+  // ---------------------------------------------------------
+
+  const loadMonthlyRecords = async () => {
+    if (!selectedCustomer?._id) {
+      return;
     }
 
-    return `${quantity} L`;
+    try {
+      setMonthlyLoading(true);
+      setMonthlyError("");
+
+      const dates = createMonthDays(
+        recordYear,
+        recordMonth
+      );
+
+      /*
+       * The existing Milk Delivery API supports
+       * fetching deliveries by date.
+       *
+       * We fetch each day of the selected month
+       * and select the delivery belonging to the
+       * selected customer.
+       */
+
+      const responses = await Promise.all(
+        dates.map((date) =>
+          getMilkDeliveriesApi({
+            date,
+          })
+        )
+      );
+
+      const records = dates.map(
+        (date, index) => {
+          const response = responses[index];
+
+          const deliveries = Array.isArray(
+            response
+          )
+            ? response
+            : response?.deliveries || [];
+
+          const customerDelivery =
+            deliveries.find((delivery) => {
+              const deliveryCustomerId =
+                delivery.customerId?._id ||
+                delivery.customerId ||
+                delivery.customer?._id;
+
+              return (
+                String(deliveryCustomerId) ===
+                String(selectedCustomer._id)
+              );
+            });
+
+          const morning = Number(
+            customerDelivery?.morning || 0
+          );
+
+          const evening = Number(
+            customerDelivery?.evening || 0
+          );
+
+          const totalLiters = Number(
+            customerDelivery?.totalLiters ||
+              morning + evening
+          );
+
+          const amount = Number(
+            customerDelivery?.amount || 0
+          );
+
+          return {
+            date,
+            morning,
+            evening,
+            totalLiters,
+            amount,
+            exists:
+              Boolean(customerDelivery),
+          };
+        }
+      );
+
+      setMonthlyRecords(records);
+    } catch (error) {
+      console.error(
+        "Customer monthly records error:",
+        error
+      );
+
+      setMonthlyError(
+        error.response?.data?.message ||
+          error.message ||
+          "Unable to load monthly milk records."
+      );
+
+      setMonthlyRecords([]);
+    } finally {
+      setMonthlyLoading(false);
+    }
   };
+
+  useEffect(() => {
+    if (!selectedCustomer) {
+      return;
+    }
+
+    loadMonthlyRecords();
+  }, [
+    selectedCustomer,
+    recordYear,
+    recordMonth,
+  ]);
+
+  // ---------------------------------------------------------
+  // Previous month
+  // ---------------------------------------------------------
+
+  const handlePreviousMonth = () => {
+    if (recordMonth === 1) {
+      setRecordYear(
+        (current) => current - 1
+      );
+
+      setRecordMonth(12);
+    } else {
+      setRecordMonth(
+        (current) => current - 1
+      );
+    }
+  };
+
+  // ---------------------------------------------------------
+  // Next month
+  // ---------------------------------------------------------
+
+  const handleNextMonth = () => {
+    if (recordMonth === 12) {
+      setRecordYear(
+        (current) => current + 1
+      );
+
+      setRecordMonth(1);
+    } else {
+      setRecordMonth(
+        (current) => current + 1
+      );
+    }
+  };
+
+  // ---------------------------------------------------------
+  // Monthly totals
+  // ---------------------------------------------------------
+
+  const monthlySummary = useMemo(() => {
+    return monthlyRecords.reduce(
+      (result, record) => {
+        result.morning += Number(
+          record.morning || 0
+        );
+
+        result.evening += Number(
+          record.evening || 0
+        );
+
+        result.total += Number(
+          record.totalLiters || 0
+        );
+
+        return result;
+      },
+      {
+        morning: 0,
+        evening: 0,
+        total: 0,
+      }
+    );
+  }, [monthlyRecords]);
+
+  // ---------------------------------------------------------
+  // Monthly amount
+  // ---------------------------------------------------------
+
+  const monthlyAmount = useMemo(() => {
+    if (!selectedCustomer) {
+      return 0;
+    }
+
+    return (
+      monthlySummary.total *
+      Number(
+        selectedCustomer.ratePerLiter || 0
+      )
+    );
+  }, [
+    monthlySummary.total,
+    selectedCustomer,
+  ]);
+
+  // ---------------------------------------------------------
+  // Monthly records screen
+  // ---------------------------------------------------------
+
+  if (selectedCustomer) {
+    return (
+      <div>
+        {/* Header */}
+        <div className="page-heading">
+          <div>
+            <Button
+              variant="link"
+              className="px-0 mb-2"
+              onClick={() => {
+                setSelectedCustomer(null);
+                setMonthlyRecords([]);
+                setMonthlyError("");
+              }}
+            >
+              ← Back to Customers
+            </Button>
+
+            <h2 className="mb-1">
+              {selectedCustomer.name}
+            </h2>
+
+            <p className="text-muted mb-0">
+              Monthly milk delivery records
+            </p>
+          </div>
+        </div>
+
+        {/* Customer information */}
+        <Card className="mb-4">
+          <Card.Body>
+            <Row>
+              <Col md={4}>
+                <div className="text-muted small">
+                  Customer
+                </div>
+
+                <div className="fw-semibold">
+                  {selectedCustomer.name}
+                </div>
+              </Col>
+
+              <Col md={4}>
+                <div className="text-muted small">
+                  Mobile
+                </div>
+
+                <div className="fw-semibold">
+                  {selectedCustomer.mobile ||
+                    "-"}
+                </div>
+              </Col>
+
+              <Col md={4}>
+                <div className="text-muted small">
+                  Rate
+                </div>
+
+                <div className="fw-semibold">
+                  ₹
+                  {Number(
+                    selectedCustomer.ratePerLiter ||
+                      0
+                  )}{" "}
+                  / L
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
+
+        {/* Month navigation */}
+        <Card className="mb-4">
+          <Card.Body>
+            <div className="d-flex justify-content-between align-items-center">
+              <Button
+                variant="outline-primary"
+                onClick={
+                  handlePreviousMonth
+                }
+              >
+                ← Previous
+              </Button>
+
+              <h4 className="mb-0">
+                {formatMonth(
+                  recordYear,
+                  recordMonth
+                )}
+              </h4>
+
+              <Button
+                variant="outline-primary"
+                onClick={handleNextMonth}
+              >
+                Next →
+              </Button>
+            </div>
+          </Card.Body>
+        </Card>
+
+        {/* Error */}
+        {monthlyError && (
+          <Alert
+            variant="danger"
+            dismissible
+            onClose={() =>
+              setMonthlyError("")
+            }
+          >
+            {monthlyError}
+          </Alert>
+        )}
+
+        {/* Summary */}
+        <Row className="g-3 mb-4">
+          <Col md={3}>
+            <Card>
+              <Card.Body>
+                <div className="text-muted">
+                  Morning
+                </div>
+
+                <div className="fs-4 fw-bold">
+                  {formatLiters(
+                    monthlySummary.morning
+                  )}
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          <Col md={3}>
+            <Card>
+              <Card.Body>
+                <div className="text-muted">
+                  Evening
+                </div>
+
+                <div className="fs-4 fw-bold">
+                  {formatLiters(
+                    monthlySummary.evening
+                  )}
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          <Col md={3}>
+            <Card>
+              <Card.Body>
+                <div className="text-muted">
+                  Total Milk
+                </div>
+
+                <div className="fs-4 fw-bold text-success">
+                  {formatLiters(
+                    monthlySummary.total
+                  )}
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          <Col md={3}>
+            <Card>
+              <Card.Body>
+                <div className="text-muted">
+                  Monthly Amount
+                </div>
+
+                <div className="fs-4 fw-bold">
+                  ₹{monthlyAmount.toFixed(2)}
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+
+        {/* Daily records */}
+        <Card>
+          <Card.Body>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h5 className="mb-1">
+                  Daily Milk Record
+                </h5>
+
+                <div className="text-muted small">
+                  {formatMonth(
+                    recordYear,
+                    recordMonth
+                  )}
+                </div>
+              </div>
+
+              <Button
+                variant="outline-secondary"
+                size="sm"
+                onClick={
+                  loadMonthlyRecords
+                }
+                disabled={monthlyLoading}
+              >
+                {monthlyLoading ? (
+                  <Spinner
+                    size="sm"
+                    animation="border"
+                  />
+                ) : (
+                  "Refresh"
+                )}
+              </Button>
+            </div>
+
+            {monthlyLoading ? (
+              <div className="text-center py-5">
+                <Spinner animation="border" />
+
+                <div className="text-muted mt-2">
+                  Loading monthly records...
+                </div>
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <Table
+                  hover
+                  bordered
+                  className="align-middle"
+                >
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Morning</th>
+                      <th>Evening</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {monthlyRecords.map(
+                      (record) => (
+                        <tr
+                          key={record.date}
+                          className={
+                            !record.exists
+                              ? "text-muted"
+                              : ""
+                          }
+                        >
+                          <td>
+                            {formatDisplayDate(
+                              record.date
+                            )}
+                          </td>
+
+                          <td>
+                            {formatLiters(
+                              record.morning
+                            )}
+                          </td>
+
+                          <td>
+                            {formatLiters(
+                              record.evening
+                            )}
+                          </td>
+
+                          <td className="fw-semibold">
+                            {formatLiters(
+                              record.totalLiters
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    )}
+
+                    <tr className="table-light">
+                      <td>
+                        <strong>
+                          Total
+                        </strong>
+                      </td>
+
+                      <td>
+                        <strong>
+                          {formatLiters(
+                            monthlySummary.morning
+                          )}
+                        </strong>
+                      </td>
+
+                      <td>
+                        <strong>
+                          {formatLiters(
+                            monthlySummary.evening
+                          )}
+                        </strong>
+                      </td>
+
+                      <td>
+                        <strong>
+                          {formatLiters(
+                            monthlySummary.total
+                          )}
+                        </strong>
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </div>
+            )}
+          </Card.Body>
+        </Card>
+      </div>
+    );
+  }
+
+  // ---------------------------------------------------------
+  // Customers screen
+  // ---------------------------------------------------------
 
   return (
     <div>
@@ -187,28 +851,28 @@ export default function Customers() {
         </div>
 
         {canManage && (
-          <Button
-            onClick={handleAdd}
-          >
+          <Button onClick={handleAdd}>
             + Add Customer
           </Button>
         )}
       </div>
 
+      {/* Error */}
       {error && (
         <Alert
           variant="danger"
           dismissible
           onClose={() =>
-            setError('')
+            setError("")
           }
         >
           {Array.isArray(error)
-            ? error.join(', ')
+            ? error.join(", ")
             : error}
         </Alert>
       )}
 
+      {/* Customer table */}
       <Card>
         <Card.Body>
           <Row className="mb-3">
@@ -229,14 +893,16 @@ export default function Customers() {
               className="text-md-end mt-2 mt-md-0"
             >
               <span className="text-muted">
-                Showing{' '}
+                Showing{" "}
                 <strong>
-                  {filteredCustomers.length}
-                </strong>{' '}
-                of{' '}
+                  {
+                    filteredCustomers.length
+                  }
+                </strong>{" "}
+                of{" "}
                 <strong>
                   {customers.length}
-                </strong>{' '}
+                </strong>{" "}
                 customers
               </span>
             </Col>
@@ -259,8 +925,8 @@ export default function Customers() {
 
               <p className="text-muted">
                 {search
-                  ? 'Try a different search.'
-                  : 'Add your first customer to get started.'}
+                  ? "Try a different search."
+                  : "Add your first customer to get started."}
               </p>
             </div>
           ) : (
@@ -310,23 +976,39 @@ export default function Customers() {
                       <tr
                         key={customer._id}
                       >
+                        {/* Customer */}
+
                         <td>
-                          <div className="fw-semibold">
+                          <button
+                            type="button"
+                            className="btn btn-link p-0 text-decoration-none fw-semibold"
+                            onClick={() =>
+                              handleViewRecords(
+                                customer
+                              )
+                            }
+                          >
                             {customer.name}
-                          </div>
+                          </button>
 
                           {customer.address && (
-                            <small className="text-muted">
-                              {
-                                customer.address
-                              }
-                            </small>
+                            <div>
+                              <small className="text-muted">
+                                {
+                                  customer.address
+                                }
+                              </small>
+                            </div>
                           )}
                         </td>
+
+                        {/* Mobile */}
 
                         <td>
                           {customer.mobile}
                         </td>
+
+                        {/* Morning */}
 
                         <td>
                           {formatQuantity(
@@ -334,11 +1016,15 @@ export default function Customers() {
                           )}
                         </td>
 
+                        {/* Evening */}
+
                         <td>
                           {formatQuantity(
                             customer.evening
                           )}
                         </td>
+
+                        {/* Rate */}
 
                         <td>
                           ₹
@@ -347,6 +1033,8 @@ export default function Customers() {
                               0
                           )}
                         </td>
+
+                        {/* Status */}
 
                         <td>
                           {customer.active ? (
@@ -360,8 +1048,23 @@ export default function Customers() {
                           )}
                         </td>
 
+                        {/* Actions */}
+
                         {canManage && (
                           <td className="text-end">
+                            <Button
+                              variant="outline-secondary"
+                              size="sm"
+                              className="me-2"
+                              onClick={() =>
+                                handleViewRecords(
+                                  customer
+                                )
+                              }
+                            >
+                              View
+                            </Button>
+
                             <Button
                               variant="outline-primary"
                               size="sm"
@@ -378,8 +1081,8 @@ export default function Customers() {
                             <Button
                               variant={
                                 customer.active
-                                  ? 'outline-danger'
-                                  : 'outline-success'
+                                  ? "outline-danger"
+                                  : "outline-success"
                               }
                               size="sm"
                               onClick={() =>
@@ -389,8 +1092,8 @@ export default function Customers() {
                               }
                             >
                               {customer.active
-                                ? 'Deactivate'
-                                : 'Activate'}
+                                ? "Deactivate"
+                                : "Activate"}
                             </Button>
                           </td>
                         )}
@@ -404,11 +1107,14 @@ export default function Customers() {
         </Card.Body>
       </Card>
 
+      {/* Customer form */}
+
       <CustomerForm
         show={showForm}
-        onHide={() =>
-          setShowForm(false)
-        }
+        onHide={() => {
+          setShowForm(false);
+          setEditingCustomer(null);
+        }}
         onSubmit={handleSubmit}
         customer={editingCustomer}
         loading={formLoading}
