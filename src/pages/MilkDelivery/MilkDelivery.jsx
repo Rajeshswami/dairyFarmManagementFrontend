@@ -170,6 +170,8 @@ function MilkDelivery() {
 
         evening: Number(existing?.evening || 0),
 
+        ratePerLiter: Number(existing?.ratePerLiter ?? customer.ratePerLiter ?? 75),
+
         existing: Boolean(existing),
       };
     });
@@ -259,6 +261,7 @@ function MilkDelivery() {
         date,
         morning,
         evening,
+        ...(row.deliveryId ? { ratePerLiter: Number(row.ratePerLiter || row.customer.ratePerLiter || 75) } : {}),
       };
 
       if (row.deliveryId) {
@@ -311,6 +314,7 @@ function MilkDelivery() {
           date,
           morning,
           evening,
+          ...(row.deliveryId ? { ratePerLiter: Number(row.ratePerLiter || row.customer.ratePerLiter || 75) } : {}),
         };
 
         if (row.deliveryId) {
@@ -506,6 +510,7 @@ function MilkDelivery() {
               <thead>
                 <tr>
                   <th>Customer</th>
+                  <th style={{ width: 145 }}>Rate / L</th>
                   <th style={{ width: 180 }}>Morning</th>
                   <th style={{ width: 180 }}>Evening</th>
                   <th style={{ width: 220 }}>Action</th>
@@ -520,6 +525,21 @@ function MilkDelivery() {
 
                     <td>
                       <strong>{row.customer.name}</strong>
+                    </td>
+
+                    {/* Historical delivery rate: editable only after a delivery exists */}
+                    <td>
+                      <Form.Control
+                        type="number"
+                        min="0.01"
+                        max="100000"
+                        step="0.01"
+                        value={row.ratePerLiter}
+                        disabled={!row.deliveryId}
+                        aria-label={`Rate per litre for ${row.customer.name}`}
+                        onChange={(e) => updateRow(row.customerId, "ratePerLiter", e.target.value)}
+                      />
+                      {!row.deliveryId && <small className="text-muted">Uses customer rate</small>}
                     </td>
 
                     {/* Morning */}

@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { getFarmToday } from '../../utils/farmDate';
+import { getDefaultMilkRateApi } from '../../api/customers.api';
 import {
   Alert,
   Button,
@@ -15,15 +17,14 @@ const initialForm = {
   morning: 0,
   evening: 0,
   startDate: '',
+  ratePerLiter: 75,
 };
 
-const quantityOptions = [
-  { value: 0, label: 'No milk' },
-  { value: 0.25, label: '¼ L' },
-  { value: 0.5, label: '½ L' },
-  { value: 0.75, label: '¾ L' },
-  { value: 1, label: '1 L' },
-];
+const quantityOptions = Array.from({ length: 41 }, (_, index) => {
+  const value = index * 0.25;
+  const label = value === 0 ? 'No milk' : `${Number(value.toFixed(2))} L`;
+  return { value, label };
+});
 
 export default function CustomerForm({
   show,
@@ -50,14 +51,23 @@ export default function CustomerForm({
         startDate: customer.startDate
           ? customer.startDate.slice(0, 10)
           : '',
+        ratePerLiter: customer.ratePerLiter ?? 75,
       });
     } else {
       setForm({
         ...initialForm,
-        startDate: new Date()
-          .toISOString()
-          .slice(0, 10),
+        startDate: getFarmToday(),
+        ratePerLiter: 75,
       });
+      if (show) {
+        getDefaultMilkRateApi()
+          .then((result) => {
+            if (Number.isFinite(Number(result?.ratePerLiter))) {
+              setForm((previous) => ({ ...previous, ratePerLiter: Number(result.ratePerLiter) }));
+            }
+          })
+          .catch(() => {});
+      }
     }
 
     setError('');
@@ -70,7 +80,8 @@ export default function CustomerForm({
       ...previous,
       [name]:
         name === 'morning' ||
-        name === 'evening'
+        name === 'evening' ||
+        name === 'ratePerLiter'
           ? Number(value)
           : value,
     }));
@@ -249,15 +260,19 @@ export default function CustomerForm({
             />
           </Form.Group>
 
-          <div className="mt-3 p-3 bg-light rounded">
-            <small className="text-muted">
-              Milk rate
-            </small>
-
-            <div className="fw-bold">
-              ₹75 / litre
-            </div>
-          </div>
+          <Form.Group className="mt-3">
+            <Form.Label>Milk rate (₹ per litre)</Form.Label>
+            <Form.Control
+              type="number"
+              name="ratePerLiter"
+              min="0.01"
+              step="0.01"
+              value={form.ratePerLiter}
+              onChange={handleChange}
+              required
+            />
+            <Form.Text className="text-muted">Rate changes apply to new deliveries. Past deliveries retain their saved rate.</Form.Text>
+          </Form.Group>
         </Modal.Body>
 
         <Modal.Footer>

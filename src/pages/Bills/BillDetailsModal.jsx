@@ -99,6 +99,12 @@ function BillDetailsModal({
             </Col>
           </Row>
 
+          {Number(bill.creditAmount || 0) > 0 && (
+            <div className="credit-notice mb-3">
+              Customer credit: <strong>₹{Number(bill.creditAmount).toFixed(2)}</strong>. This is an overpayment retained in the payment history.
+            </div>
+          )}
+
           <hr />
 
           <Row>

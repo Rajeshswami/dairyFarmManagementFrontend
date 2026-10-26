@@ -5,6 +5,11 @@ export const getCustomersApi = async () => {
   return response.data;
 };
 
+export const getDefaultMilkRateApi = async () => {
+  const response = await api.get('/customers/default-rate');
+  return response.data;
+};
+
 export const getActiveCustomersApi = async () => {
   const response = await api.get('/customers/active');
   return response.data;

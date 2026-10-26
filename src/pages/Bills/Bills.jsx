@@ -1,780 +1,165 @@
-import { useEffect, useMemo, useState } from 'react';
-
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  Form,
-  Spinner,
-  Table,
-} from 'react-bootstrap';
-
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Alert, Badge, Button, Card, Form, Spinner, Table } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
-
-import {
-  getActiveCustomersApi,
-} from '../../api/customers.api';
-
-import {
-  generateMonthlyBillApi,
-  getMonthlyBillsApi,
-} from '../../api/bills.api';
-
+import { getActiveCustomersApi } from '../../api/customers.api';
+import { generateMonthlyBillApi, getMonthlyBillsApi } from '../../api/bills.api';
 import BillGenerateModal from './BillGenerateModal';
 import BillDetailsModal from './BillDetailsModal';
-import {
-  getFarmYear,
-  getFarmMonth,
-} from "../../utils/farmDate";
+import { getFarmYear, getFarmMonth } from '../../utils/farmDate';
+
+const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const money = (value) => Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const monthName = (month) => monthNames[Number(month) - 1] || '';
+const getYears = () => { const year = getFarmYear(); return Array.from({ length: 7 }, (_, index) => year - 3 + index); };
+
 export default function Bills() {
   const { user } = useAuth();
+  const [year, setYear] = useState(getFarmYear());
+  const [month, setMonth] = useState(getFarmMonth());
+  const [customers, setCustomers] = useState([]);
+  const [rows, setRows] = useState([]);
+  const [summary, setSummary] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [generatingCustomerId, setGeneratingCustomerId] = useState('');
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [showGenerate, setShowGenerate] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [selectedBill, setSelectedBill] = useState(null);
+  const canManage = user?.role === 'ADMIN' || user?.role === 'MANAGER';
 
-  const today = new Date();
+  const loadCustomers = useCallback(async () => {
+    const result = await getActiveCustomersApi();
+    setCustomers(Array.isArray(result) ? result : result?.customers || []);
+  }, []);
 
-const [year, setYear] =
-  useState(getFarmYear());
-
-const [month, setMonth] =
-  useState(getFarmMonth());
-
-  const [customers, setCustomers] =
-    useState([]);
-
-  const [bills, setBills] =
-    useState([]);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [generating, setGenerating] =
-    useState(false);
-
-  const [error, setError] =
-    useState('');
-
-  const [showGenerate, setShowGenerate] =
-    useState(false);
-
-  const [showDetails, setShowDetails] =
-    useState(false);
-
-  const [selectedBill, setSelectedBill] =
-    useState(null);
-
-  const canManage =
-    user?.role === 'ADMIN' ||
-    user?.role === 'MANAGER';
-
-  // ---------------------------------------
-  // Load customers
-  // ---------------------------------------
-
-  const loadCustomers = async () => {
+  const loadBills = useCallback(async () => {
+    setLoading(true);
+    setError('');
     try {
-      const result =
-        await getActiveCustomersApi();
-
-      if (Array.isArray(result)) {
-        setCustomers(result);
-      } else if (
-        Array.isArray(result?.customers)
-      ) {
-        setCustomers(result.customers);
-      } else {
-        setCustomers([]);
-      }
+      const result = await getMonthlyBillsApi(year, month);
+      setRows(Array.isArray(result?.customers) ? result.customers : []);
+      setSummary(result?.summary || {});
     } catch (err) {
-      console.error(err);
-
-      setError(
-        err?.response?.data?.message ||
-          'Failed to load customers.'
-      );
-    }
-  };
-
-  // ---------------------------------------
-  // Load monthly bills
-  // ---------------------------------------
-
-  const loadBills = async () => {
-    try {
-      setLoading(true);
-      setError('');
-
-      const result =
-        await getMonthlyBillsApi(
-          year,
-          month
-        );
-
-      /*
-       * Actual backend response:
-       *
-       * {
-       *   year: 2026,
-       *   month: 9,
-       *   summary: {...},
-       *   customers: [...]
-       * }
-       */
-
-      if (Array.isArray(result)) {
-        setBills(result);
-      } else if (
-        Array.isArray(result?.customers)
-      ) {
-        setBills(result.customers);
-      } else if (
-        Array.isArray(result?.bills)
-      ) {
-        setBills(result.bills);
-      } else if (
-        Array.isArray(result?.data)
-      ) {
-        setBills(result.data);
-      } else {
-        setBills([]);
-      }
-    } catch (err) {
-      console.error(err);
-
-      setError(
-        err?.response?.data?.message ||
-          'Failed to load monthly bills.'
-      );
+      setError(err?.response?.data?.message || "Could not load this month billing records.");
+      setRows([]);
+      setSummary({});
     } finally {
       setLoading(false);
     }
-  };
-
-  // ---------------------------------------
-  // Initial load
-  // ---------------------------------------
-
-  useEffect(() => {
-    loadCustomers();
-  }, []);
-
-  useEffect(() => {
-    loadBills();
   }, [year, month]);
 
-  // ---------------------------------------
-  // Summary
-  // ---------------------------------------
+  useEffect(() => { loadCustomers().catch((err) => setError(err?.response?.data?.message || 'Failed to load customers.')); }, [loadCustomers]);
+  useEffect(() => { loadBills(); }, [loadBills]);
 
-  const summary = useMemo(() => {
-    return bills.reduce(
-      (result, bill) => {
-        result.totalLiters +=
-          Number(
-            bill.totalLiters
-          ) || 0;
+  const visibleRows = useMemo(() => rows.filter((row) => {
+    const query = search.trim().toLowerCase();
+    const matchesSearch = !query || `${row.customer?.name || ''} ${row.customer?.mobile || ''}`.toLowerCase().includes(query);
+    const matchesStatus = statusFilter === 'ALL' || (statusFilter === 'UNBILLED' ? !row.generated && row.hasDeliveries : statusFilter === 'NO_DELIVERY' ? !row.hasDeliveries : row.status === statusFilter);
+    return matchesSearch && matchesStatus;
+  }), [rows, search, statusFilter]);
 
-        result.totalBilling +=
-          Number(
-            bill.totalAmount
-          ) || 0;
-
-        result.totalCollected +=
-          Number(
-            bill.paidAmount
-          ) || 0;
-
-        result.totalPending +=
-          Number(
-            bill.pendingAmount
-          ) || 0;
-
-        if (bill.status === 'PAID') {
-          result.paidCustomers += 1;
-        }
-
-        if (bill.status === 'PARTIAL') {
-          result.partialCustomers += 1;
-        }
-
-        if (bill.status === 'PENDING') {
-          result.pendingCustomers += 1;
-        }
-
-        return result;
-      },
-      {
-        totalLiters: 0,
-        totalBilling: 0,
-        totalCollected: 0,
-        totalPending: 0,
-        paidCustomers: 0,
-        partialCustomers: 0,
-        pendingCustomers: 0,
-      }
-    );
-  }, [bills]);
-
-  // ---------------------------------------
-  // Generate bill
-  // ---------------------------------------
-
-  const handleGenerate = async (
-    customerId
-  ) => {
+  const handleGenerate = async (customerId) => {
+    setGeneratingCustomerId(customerId);
+    setError('');
+    setNotice('');
     try {
-      setGenerating(true);
-      setError('');
-
-      await generateMonthlyBillApi(
-        customerId,
-        year,
-        month
-      );
-
+      await generateMonthlyBillApi(customerId, year, month);
       setShowGenerate(false);
-
+      setNotice(`Bill generated or refreshed for ${monthName(month)} ${year}.`);
       await loadBills();
     } catch (err) {
-      console.error(err);
-
-      const message =
-        err?.response?.data?.message;
-
-      setError(
-        Array.isArray(message)
-          ? message.join(', ')
-          : message ||
-            'Failed to generate bill.'
-      );
+      const message = err?.response?.data?.message;
+      setError(Array.isArray(message) ? message.join(', ') : message || 'Failed to generate bill.');
     } finally {
-      setGenerating(false);
+      setGeneratingCustomerId('');
     }
   };
 
-  // ---------------------------------------
-  // View bill
-  // ---------------------------------------
-
-  const handleView = (bill) => {
-    setSelectedBill(bill);
+  const handleView = (row) => {
+    setSelectedBill({ ...row, month, year });
     setShowDetails(true);
   };
 
-  // ---------------------------------------
-  // Clear filters
-  // ---------------------------------------
+  const refreshAfterPayment = async () => {
+    await loadBills();
+    if (!selectedBill?.billId) return;
+    const refreshed = await getMonthlyBillsApi(year, month);
+    const row = refreshed?.customers?.find((item) => String(item.billId) === String(selectedBill.billId));
+    if (row) setSelectedBill({ ...row, month, year });
+  };
 
-const clearFilters = () => {
-  setYear(getFarmYear());
-  setMonth(getFarmMonth());
-};
+  const customersWithDeliveries = customers.filter((customer) => rows.some((row) => String(row.customer?._id) === String(customer._id) && row.hasDeliveries));
 
-  return (
-    <div>
+  const totals = {
+    billing: Number(summary.totalBilling || 0),
+    estimated: Number(summary.totalEstimatedUnbilled || 0),
+    collected: Number(summary.totalCollected || 0),
+    pending: Number(summary.totalPending || 0),
+    credit: Number(summary.totalCredit || 0),
+    liters: Number(summary.totalMilkLiters || 0),
+  };
 
-      {/* Header */}
-
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-1">
-            Monthly Billing
-          </h2>
-
-          <p className="text-muted mb-0">
-            Generate and manage customer
-            monthly bills.
-          </p>
-        </div>
-
-        {canManage && (
-          <Button
-            variant="primary"
-            onClick={() =>
-              setShowGenerate(true)
-            }
-          >
-            + Generate Bill
-          </Button>
-        )}
+  return <div className="billing-page">
+    <section className="page-hero billing-hero">
+      <div className="page-hero-copy">
+        <span className="eyebrow">FARM FINANCE</span>
+        <h1>Monthly billing</h1>
+        <p>Review actual milk deliveries, preview unbilled totals, and generate one accurate bill per customer.</p>
       </div>
+      <div className="page-hero-period"><span>Selected period</span><strong>{monthName(month)} {year}</strong><small>Amounts use the rate saved on each delivery.</small></div>
+    </section>
 
-      {/* Error */}
+    {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{Array.isArray(error) ? error.join(', ') : error}</Alert>}
+    {notice && <Alert variant="success" dismissible onClose={() => setNotice('')}>{notice}</Alert>}
 
-      {error && (
-        <Alert
-          variant="danger"
-          dismissible
-          onClose={() =>
-            setError('')
-          }
-        >
-          {Array.isArray(error)
-            ? error.join(', ')
-            : error}
-        </Alert>
-      )}
-
-      {/* Period filter */}
-
-      <Card className="border-0 shadow-sm mb-4">
-        <Card.Body>
-
-          <div className="row g-3 align-items-end">
-
-            <div className="col-md-4">
-              <Form.Group>
-                <Form.Label>
-                  Year
-                </Form.Label>
-
-                <Form.Select
-                  value={year}
-                  onChange={(event) =>
-                    setYear(
-                      Number(
-                        event.target.value
-                      )
-                    )
-                  }
-                >
-                  {getYears().map(
-                    (item) => (
-                      <option
-                        key={item}
-                        value={item}
-                      >
-                        {item}
-                      </option>
-                    )
-                  )}
-                </Form.Select>
-              </Form.Group>
-            </div>
-
-            <div className="col-md-4">
-              <Form.Group>
-                <Form.Label>
-                  Month
-                </Form.Label>
-
-                <Form.Select
-                  value={month}
-                  onChange={(event) =>
-                    setMonth(
-                      Number(
-                        event.target.value
-                      )
-                    )
-                  }
-                >
-                  {Array.from(
-                    { length: 12 },
-                    (_, index) => (
-                      <option
-                        key={index + 1}
-                        value={index + 1}
-                      >
-                        {monthName(
-                          index + 1
-                        )}
-                      </option>
-                    )
-                  )}
-                </Form.Select>
-              </Form.Group>
-            </div>
-
-            <div className="col-md-4">
-              <Button
-                variant="outline-secondary"
-                className="w-100"
-                onClick={clearFilters}
-              >
-                Current Month
-              </Button>
-            </div>
-
-          </div>
-
-        </Card.Body>
-      </Card>
-
-      {/* Selected period */}
-
-      <div className="mb-3">
-        <h5>
-          {monthName(month)} {year}
-        </h5>
+    <Card className="filter-card mb-4"><Card.Body><div className="billing-toolbar">
+      <div className="billing-period-fields">
+        <Form.Group><Form.Label>Month</Form.Label><Form.Select value={month} onChange={(event) => setMonth(Number(event.target.value))}>{monthNames.map((name, index) => <option key={name} value={index + 1}>{name}</option>)}</Form.Select></Form.Group>
+        <Form.Group><Form.Label>Year</Form.Label><Form.Select value={year} onChange={(event) => setYear(Number(event.target.value))}>{getYears().map((item) => <option key={item} value={item}>{item}</option>)}</Form.Select></Form.Group>
       </div>
+      <div className="billing-toolbar-actions"><Form.Control aria-label="Search customer" placeholder="Search name or mobile" value={search} onChange={(event) => setSearch(event.target.value)} /><Button variant="outline-secondary" onClick={() => { setYear(getFarmYear()); setMonth(getFarmMonth()); setSearch(''); setStatusFilter('ALL'); }}>Current month</Button>{canManage && <Button onClick={() => setShowGenerate(true)}>Generate a bill</Button>}</div>
+    </div></Card.Body></Card>
 
-      {/* Summary */}
-
-      <div className="row g-3 mb-4">
-
-        <SummaryCard
-          title="Total Billing"
-          value={`₹${formatMoney(
-            summary.totalBilling
-          )}`}
-        />
-
-        <SummaryCard
-          title="Collected"
-          value={`₹${formatMoney(
-            summary.totalCollected
-          )}`}
-          valueClass="text-success"
-        />
-
-        <SummaryCard
-          title="Pending"
-          value={`₹${formatMoney(
-            summary.totalPending
-          )}`}
-          valueClass="text-danger"
-        />
-
-        <SummaryCard
-          title="Milk Delivered"
-          value={`${summary.totalLiters.toFixed(
-            2
-          )} L`}
-        />
-
-      </div>
-
-      {/* Customer status summary */}
-
-      <div className="row g-3 mb-4">
-
-        <div className="col-md-4">
-          <Card className="border-0 shadow-sm">
-            <Card.Body>
-              <div className="text-muted small">
-                Paid Customers
-              </div>
-
-              <div className="fs-3 fw-bold text-success">
-                {summary.paidCustomers}
-              </div>
-            </Card.Body>
-          </Card>
-        </div>
-
-        <div className="col-md-4">
-          <Card className="border-0 shadow-sm">
-            <Card.Body>
-              <div className="text-muted small">
-                Partial Payments
-              </div>
-
-              <div className="fs-3 fw-bold text-warning">
-                {summary.partialCustomers}
-              </div>
-            </Card.Body>
-          </Card>
-        </div>
-
-        <div className="col-md-4">
-          <Card className="border-0 shadow-sm">
-            <Card.Body>
-              <div className="text-muted small">
-                Pending Customers
-              </div>
-
-              <div className="fs-3 fw-bold text-danger">
-                {summary.pendingCustomers}
-              </div>
-            </Card.Body>
-          </Card>
-        </div>
-
-      </div>
-
-      {/* Bills table */}
-
-      <Card className="border-0 shadow-sm">
-        <Card.Body className="p-0">
-
-          {loading ? (
-            <div className="text-center py-5">
-
-              <Spinner animation="border" />
-
-              <div className="text-muted mt-2">
-                Loading bills...
-              </div>
-
-            </div>
-          ) : bills.length === 0 ? (
-            <div className="text-center py-5">
-
-              <div className="text-muted mb-3">
-                No bills generated for{' '}
-                {monthName(month)} {year}.
-              </div>
-
-              {canManage && (
-                <Button
-                  variant="primary"
-                  onClick={() =>
-                    setShowGenerate(true)
-                  }
-                >
-                  Generate First Bill
-                </Button>
-              )}
-
-            </div>
-          ) : (
-            <div className="table-responsive">
-
-              <Table
-                hover
-                className="mb-0 align-middle"
-              >
-
-                <thead className="table-light">
-                  <tr>
-                    <th>Customer</th>
-                    <th>Mobile</th>
-                    <th>Milk</th>
-                    <th>Bill</th>
-                    <th>Paid</th>
-                    <th>Pending</th>
-                    <th>Status</th>
-                    <th className="text-end">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {bills.map((bill) => {
-
-                    const customer =
-                      bill.customer;
-
-                    return (
-                      <tr
-                        key={bill.billId}
-                      >
-
-                        <td>
-                          <strong>
-                            {customer?.name ||
-                              'Unknown'}
-                          </strong>
-                        </td>
-
-                        <td>
-                          {customer?.mobile ||
-                            '-'}
-                        </td>
-
-                        <td>
-                          {Number(
-                            bill.totalLiters ||
-                              0
-                          ).toFixed(2)}{' '}
-                          L
-                        </td>
-
-                        <td>
-                          <strong>
-                            ₹
-                            {formatMoney(
-                              bill.totalAmount
-                            )}
-                          </strong>
-                        </td>
-
-                        <td className="text-success">
-                          ₹
-                          {formatMoney(
-                            bill.paidAmount
-                          )}
-                        </td>
-
-                        <td className="text-danger">
-                          <strong>
-                            ₹
-                            {formatMoney(
-                              bill.pendingAmount
-                            )}
-                          </strong>
-                        </td>
-
-                        <td>
-                          <StatusBadge
-                            status={
-                              bill.status
-                            }
-                          />
-                        </td>
-
-                        <td>
-                          <div className="d-flex justify-content-end">
-
-                            <Button
-                              size="sm"
-                              variant="outline-primary"
-                              onClick={() =>
-                                handleView(
-                                  bill
-                                )
-                              }
-                            >
-                              View
-                            </Button>
-
-                          </div>
-                        </td>
-
-                      </tr>
-                    );
-                  })}
-                </tbody>
-
-              </Table>
-
-            </div>
-          )}
-
-        </Card.Body>
-      </Card>
-
-      {/* Generate modal */}
-
-      <BillGenerateModal
-        show={showGenerate}
-        onHide={() =>
-          setShowGenerate(false)
-        }
-        onSubmit={handleGenerate}
-        customers={customers}
-        year={year}
-        month={month}
-        loading={generating}
-      />
-
-      {/* Details modal */}
-
-      <BillDetailsModal
-        show={showDetails}
-        onHide={() =>
-          setShowDetails(false)
-        }
-        bill={selectedBill}
-        onPaymentSuccess={async () => {
-          await loadBills();
-
-          /*
-           * Refresh selected bill too,
-           * so the open modal reflects
-           * the latest payment state.
-           */
-          const refreshed =
-            await getMonthlyBillsApi(
-              year,
-              month
-            );
-
-          const refreshedBills =
-            Array.isArray(
-              refreshed?.customers
-            )
-              ? refreshed.customers
-              : [];
-
-          const updatedBill =
-            refreshedBills.find(
-              (item) =>
-                item.billId ===
-                selectedBill?.billId
-            );
-
-          if (updatedBill) {
-            setSelectedBill(
-              updatedBill
-            );
-          }
-        }}
-      />
-
+    <div className="billing-metric-grid">
+      <MetricCard tone="teal" label="Generated billing" value={`₹${money(totals.billing)}`} note={`${Number(summary.generatedBills || 0)} bills finalized`} />
+      <MetricCard tone="gold" label="Unbilled estimate" value={`₹${money(totals.estimated)}`} note={`${Number(summary.ungeneratedCustomers || 0)} customers need a bill`} />
+      <MetricCard tone="green" label="Collected" value={`₹${money(totals.collected)}`} note="Recorded payments only" />
+      <MetricCard tone="coral" label="Pending on bills" value={`₹${money(totals.pending)}`} note="Finalized bills only" />
+      <MetricCard tone="purple" label="Customer credit" value={`₹${money(totals.credit)}`} note="Excess payments retained" />
+      <MetricCard tone="teal" label="Milk delivered" value={`${totals.liters.toFixed(2)} L`} note="Actual recorded deliveries" />
     </div>
-  );
+
+    <div className="billing-section-heading"><div><h2>Customer statement</h2><p>Estimated amounts are clearly separated from finalized bills.</p></div><div className="billing-status-filter"><Form.Select aria-label="Filter billing status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option value="ALL">All customers</option><option value="UNBILLED">Needs bill generation</option><option value="PENDING">Payment pending</option><option value="PARTIAL">Partially paid</option><option value="PAID">Paid</option><option value="NO_DELIVERY">No deliveries</option></Form.Select></div></div>
+
+    <Card className="billing-table-card"><Card.Body className="p-0">
+      {loading ? <div className="state-panel"><Spinner animation="border" /><span>Loading billing records…</span></div> : visibleRows.length === 0 ? <div className="state-panel"><div className="empty-state-icon">▤</div><h3>No matching customers</h3><p>Try another search or select a different status.</p></div> : <div className="table-responsive"><Table hover className="billing-table mb-0 align-middle"><thead><tr><th>Customer</th><th>Milk delivered</th><th>Rate / L</th><th>Bill / estimate</th><th>Paid</th><th>Pending</th><th>Status</th><th className="text-end">Action</th></tr></thead><tbody>
+        {visibleRows.map((row) => <tr key={row.customer?._id || row.billId}>
+          <td><div className="customer-cell"><span className="customer-avatar">{(row.customer?.name || '?').trim().charAt(0).toUpperCase()}</span><div><strong>{row.customer?.name || 'Unknown customer'}</strong><small>{row.customer?.mobile || 'No mobile'}</small></div></div></td>
+          <td><strong>{Number(row.totalLiters || 0).toFixed(2)} L</strong></td>
+          <td>₹{money(row.ratePerLiter)}<small className="table-subline">per litre</small></td>
+          <td><strong>₹{money(row.totalAmount)}</strong><small className="table-subline">{row.generated ? 'Finalized bill' : row.hasDeliveries ? 'Estimated · not billed' : 'No delivery amount'}</small></td>
+          <td className="money-paid">₹{money(row.paidAmount)}</td>
+          <td className={row.pendingAmount > 0 ? 'money-pending' : ''}>₹{money(row.pendingAmount)}{row.creditAmount > 0 && <small className="table-subline">₹{money(row.creditAmount)} credit</small>}</td>
+          <td><StatusBadge status={row.status} /></td>
+          <td className="text-end">{row.generated ? <div className="d-flex justify-content-end gap-2"><Button size="sm" variant="outline-primary" onClick={() => handleView(row)}>View</Button>{canManage && row.hasDeliveries && <Button size="sm" variant="outline-secondary" disabled={generatingCustomerId === row.customer?._id} onClick={() => handleGenerate(row.customer._id)}>{generatingCustomerId === row.customer?._id ? 'Refreshing…' : 'Refresh bill'}</Button>}</div> : row.hasDeliveries && canManage ? <Button size="sm" disabled={generatingCustomerId === row.customer?._id} onClick={() => handleGenerate(row.customer._id)}>{generatingCustomerId === row.customer?._id ? <><Spinner size="sm" className="me-1" />Generating</> : 'Generate bill'}</Button> : <span className="text-muted small">—</span>}</td>
+        </tr>)}
+      </tbody></Table></div>}
+    </Card.Body></Card>
+    <div className="billing-footnote"><span className="footnote-dot" /> <span>Estimated amounts are not receivables until a bill is generated. Editing a delivery recalculates an existing bill; payments remain in the ledger and any excess is shown as customer credit.</span></div>
+
+    <BillGenerateModal show={showGenerate} onHide={() => setShowGenerate(false)} onSubmit={handleGenerate} customers={customersWithDeliveries} year={year} month={month} loading={Boolean(generatingCustomerId)} />
+    <BillDetailsModal show={showDetails} onHide={() => setShowDetails(false)} bill={selectedBill} onPaymentSuccess={refreshAfterPayment} />
+  </div>;
 }
 
-/* -------------------------------- Helpers */
-
-function SummaryCard({
-  title,
-  value,
-  valueClass = '',
-}) {
-  return (
-    <div className="col-md-3">
-      <Card className="border-0 shadow-sm h-100">
-        <Card.Body>
-
-          <div className="text-muted small">
-            {title}
-          </div>
-
-          <div
-            className={`fs-4 fw-bold ${valueClass}`}
-          >
-            {value}
-          </div>
-
-        </Card.Body>
-      </Card>
-    </div>
-  );
-}
-
+function MetricCard({ tone, label, value, note }) { return <Card className={`billing-metric billing-metric--${tone}`}><Card.Body><div className="billing-metric-top"><span>{label}</span><span className="metric-dot" /></div><div className="billing-metric-value">{value}</div><small>{note}</small></Card.Body></Card>; }
 function StatusBadge({ status }) {
-  const variant =
-    status === 'PAID'
-      ? 'success'
-      : status === 'PARTIAL'
-      ? 'warning'
-      : 'danger';
-
-  return (
-    <Badge bg={variant}>
-      {status}
-    </Badge>
-  );
-}
-
-function formatMoney(value) {
-  return Number(
-    value || 0
-  ).toLocaleString('en-IN', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-}
-
-function monthName(month) {
-  return new Date(
-    2000,
-    Number(month) - 1,
-    1
-  ).toLocaleString('en-IN', {
-    month: 'long',
-  });
-}
-
-function getYears() {
-  const currentYear =
-    new Date().getFullYear();
-
-  return Array.from(
-    { length: 5 },
-    (_, index) =>
-      currentYear - 2 + index
-  );
+  const config = {
+    PAID: ['success', 'Paid'], PARTIAL: ['warning', 'Partially paid'], PENDING: ['danger', 'Pending'],
+    NOT_GENERATED: ['info', 'Not generated'], NO_DELIVERY: ['secondary', 'No delivery'],
+  }[status] || ['secondary', status || 'Unknown'];
+  return <Badge bg={config[0]}>{config[1]}</Badge>;
 }
