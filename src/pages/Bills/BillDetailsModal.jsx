@@ -44,7 +44,7 @@ function BillDetailsModal({
       >
         <Modal.Header closeButton>
           <Modal.Title>
-            Bill Details
+            बिल का विवरण / Bill Details
           </Modal.Title>
         </Modal.Header>
 
@@ -52,12 +52,12 @@ function BillDetailsModal({
           <Row className="mb-3">
             <Col>
               <small className="text-muted">
-                Customer
+                ग्राहक / Customer
               </small>
 
               <div className="fw-semibold">
                 {bill.customer?.name ||
-                  'Unknown Customer'}
+                  'Unknown ग्राहक / Customer'}
               </div>
 
               {bill.customer?.mobile && (
@@ -77,7 +77,7 @@ function BillDetailsModal({
           <Row className="mb-3">
             <Col>
               <small className="text-muted">
-                Billing Period
+                बिल का महीना
               </small>
 
               <div>
@@ -87,7 +87,7 @@ function BillDetailsModal({
 
             <Col>
               <small className="text-muted">
-                Milk
+                दूध
               </small>
 
               <div>
@@ -101,7 +101,7 @@ function BillDetailsModal({
 
           {Number(bill.creditAmount || 0) > 0 && (
             <div className="credit-notice mb-3">
-              Customer credit: <strong>₹{Number(bill.creditAmount).toFixed(2)}</strong>. This is an overpayment retained in the payment history.
+              ग्राहक / ग्राहक क्रेडिट: <strong>₹{Number(bill.creditAmount).toFixed(2)}</strong>. This is an overpayment retained in the payment history.
             </div>
           )}
 
@@ -110,7 +110,7 @@ function BillDetailsModal({
           <Row>
             <Col>
               <small className="text-muted">
-                Total
+                कुल राशि
               </small>
 
               <div className="fw-semibold">
@@ -123,7 +123,7 @@ function BillDetailsModal({
 
             <Col>
               <small className="text-muted">
-                Paid
+                जमा
               </small>
 
               <div className="fw-semibold text-success">
@@ -136,7 +136,7 @@ function BillDetailsModal({
 
             <Col>
               <small className="text-muted">
-                Pending
+                बाकी
               </small>
 
               <div className="fw-semibold text-danger">
@@ -153,7 +153,7 @@ function BillDetailsModal({
               setShowHistory(true)
             }
           >
-            Payment History
+            भुगतान इतिहास
           </Button>
 
           {pending > 0 && (
@@ -163,7 +163,7 @@ function BillDetailsModal({
                 setCollecting(true)
               }
             >
-              Collect Payment
+              भुगतान लें
             </Button>
           )}
 
@@ -171,7 +171,7 @@ function BillDetailsModal({
             variant="secondary"
             onClick={onHide}
           >
-            Close
+            बंद करें
           </Button>
         </Modal.Footer>
       </Modal>

@@ -1,25 +1,34 @@
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 const menuItems = [
-  { label: "Dashboard", path: "/" },
-  { label: "Customers", path: "/customers" },
-  { label: "Animals", path: "/animals" },
-  { label: "Milk Production", path: "/milk-production" },
-  { label: "Milk Delivery", path: "/milk-delivery" },
-  { label: "Bills", path: "/bills" },
-  { label: "Payments", path: "/payments" },
-  { label: "Reports", path: "/reports" },
+  { label: "Dashboard", hindi: "मुख्य पृष्ठ", path: "/", icon: "⌂" },
+  { label: "Customers", hindi: "ग्राहक", path: "/customers", icon: "♙" },
+  { label: "Animals", hindi: "पशु", path: "/animals", icon: "♧" },
+  { label: "Milk Production", hindi: "दूध उत्पादन", path: "/milk-production", icon: "◉" },
+  { label: "Milk Delivery", hindi: "दूध वितरण", path: "/milk-delivery", icon: "↗" },
+  { label: "Bills", hindi: "बिल / हिसाब", path: "/bills", icon: "▤" },
+  { label: "Payments", hindi: "पैसे जमा करें", path: "/payments", icon: "₹" },
+  { label: "Reports", hindi: "रिपोर्ट", path: "/reports", icon: "▥" },
+  { label: "Voice Assistant", hindi: "आवाज़ सहायक", path: "/voice-assistant", icon: "🎙" },
 ];
 
 export default function Sidebar({ isOpen = false, onClose = () => {} }) {
+  const [language, setLanguage] = useState(() => localStorage.getItem("dairy-app-language") || "hi");
+  useEffect(() => {
+    const syncLanguage = (event) => setLanguage(event.detail || localStorage.getItem("dairy-app-language") || "hi");
+    window.addEventListener("dairy-language-change", syncLanguage);
+    return () => window.removeEventListener("dairy-language-change", syncLanguage);
+  }, []);
+
   return (
     <aside className={`sidebar ${isOpen ? "sidebar-open" : ""}`}>
       <div className="sidebar-brand">
-        <div className="brand-icon">🐄</div>
+        <div className="brand-icon" aria-hidden="true">🌿</div>
 
         <div>
-          <div className="brand-title">Dairy Farm</div>
-          <div className="brand-subtitle">Management</div>
+          <div className="brand-title">{language === "hi" ? "अपना डेयरी" : "Dairy Farm"}</div>
+          <div className="brand-subtitle">{language === "hi" ? "आसान हिसाब-किताब" : "Management"}</div>
         </div>
 
         <button
@@ -43,7 +52,9 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
               `sidebar-link ${isActive ? "active" : ""}`
             }
           >
-            {item.label}
+            <span className="sidebar-link-icon" aria-hidden="true">{item.icon}</span>
+            <span className="sidebar-link-label">{language === "hi" ? item.hindi : item.label}</span>
+            <span className="sidebar-link-arrow" aria-hidden="true">›</span>
           </NavLink>
         ))}
       </nav>

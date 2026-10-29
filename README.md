@@ -1,16 +1,28 @@
-# React + Vite
+# Apni Dairy — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Hindi-first, responsive React + Vite frontend for dairy farm management.
 
-Currently, two official plugins are available:
+## Requirements
+- Node.js 20.19+ or a compatible supported Node LTS version
+- The NestJS backend running separately
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Local setup
+1. Install dependencies: `npm ci`
+2. Copy `.env.example` to `.env`
+3. Set `VITE_API_URL=http://localhost:5000/api` in `.env`
+4. Start the frontend: `npm run dev`
 
-## React Compiler
+## Production build
+1. Configure `VITE_API_URL` to the deployed backend API base URL before building.
+2. Run `npm ci`
+3. Run `npm run build`
+4. Publish the generated `dist/` directory on your static hosting provider.
+5. Configure SPA fallback to `/index.html` (Netlify: `_redirects` is included).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Important production checks
+- Do not commit or share `.env` files.
+- Set `VITE_API_URL` to the HTTPS API URL in the hosting environment.
+- Configure the backend CORS allowlist for the exact frontend origin and credentials.
+- Verify login cookies, CSRF protection, role permissions, billing, payments, exports, and backups against the deployed backend before accepting real farm data.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+This archive contains the frontend only. The backend source that was mixed into the supplied frontend archive has been excluded so that the Vite frontend can be installed and built independently. Backend source and its deployment dependencies should be maintained/deployed as a separate NestJS project.

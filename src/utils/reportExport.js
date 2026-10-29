@@ -162,6 +162,48 @@ export const exportReportToExcel = ({
   }
 
   /*
+   * Monthly Billing & Collection
+   */
+
+  else if (reportType === 'monthly-billing') {
+    title = 'Monthly Billing & Collection Report';
+    const customers = report?.customers || [];
+    headers = ['Customer', 'Mobile', 'Milk (L)', 'Billed Amount', 'Estimated Unbilled', 'Collected', 'Pending', 'Credit', 'Status'];
+    rows = customers.map((row) => [
+      row.customer?.name || '-',
+      row.customer?.mobile || '-',
+      safeNumber(row.totalLiters),
+      row.generated ? safeNumber(row.totalAmount) : safeNumber(0),
+      !row.generated ? safeNumber(row.estimatedAmount) : safeNumber(0),
+      safeNumber(row.paidAmount),
+      safeNumber(row.pendingAmount),
+      safeNumber(row.creditAmount),
+      row.generated ? (row.status || '-') : (row.hasDeliveries ? 'NOT GENERATED' : 'NO DELIVERY'),
+    ]);
+  }
+
+  /*
+   * Monthly Billing & Collection
+   */
+
+  else if (reportType === 'monthly-billing') {
+    title = 'Monthly Billing & Collection Report';
+    const customers = report?.customers || [];
+    headers = ['Customer', 'Mobile', 'Milk (L)', 'Billed Amount', 'Estimated Unbilled', 'Collected', 'Pending', 'Credit', 'Status'];
+    rows = customers.map((row) => [
+      row.customer?.name || '-',
+      row.customer?.mobile || '-',
+      liters(row.totalLiters),
+      row.generated ? money(row.totalAmount) : money(0),
+      !row.generated ? money(row.estimatedAmount) : money(0),
+      money(row.paidAmount),
+      money(row.pendingAmount),
+      money(row.creditAmount),
+      row.generated ? (row.status || '-') : (row.hasDeliveries ? 'NOT GENERATED' : 'NO DELIVERY'),
+    ]);
+  }
+
+  /*
    * Financial
    */
 
@@ -255,8 +297,7 @@ export const exportReportToPDF = ({
 }) => {
   const doc = new jsPDF({
     orientation:
-      reportType ===
-      'customer-consumption'
+      ['customer-consumption', 'monthly-billing'].includes(reportType)
         ? 'landscape'
         : 'portrait',
   });

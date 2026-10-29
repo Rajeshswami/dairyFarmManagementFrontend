@@ -23,6 +23,7 @@ import {
 } from '../../api/milkProduction.api';
 
 import MilkProductionForm from './MilkProductionForm';
+import './milk-production-phase6.css';
 
 export default function MilkProduction() {
   const { user } = useAuth();
@@ -260,18 +261,15 @@ export default function MilkProduction() {
   };
 
   return (
-    <div>
+    <div className="mp-page">
 
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="mp-hero">
         <div>
-          <h2 className="mb-1">
-            Milk Production
-          </h2>
+          <h2 className="mb-1">दूध उत्पादन <span>/ Milk Production</span></h2>
 
           <p className="text-muted mb-0">
-            Track daily milk production for
-            each animal.
+            हर दिन सुबह और शाम का दूध आसानी से दर्ज करें।
           </p>
         </div>
 
@@ -280,7 +278,7 @@ export default function MilkProduction() {
             variant="primary"
             onClick={handleAdd}
           >
-            + Add Production
+            ＋ दूध दर्ज करें
           </Button>
         )}
       </div>
@@ -299,14 +297,14 @@ export default function MilkProduction() {
       )}
 
       {/* Filters */}
-      <Card className="border-0 shadow-sm mb-4">
+      <Card className="mp-filter-card">
         <Card.Body>
           <div className="row g-3 align-items-end">
 
             <div className="col-md-5">
               <Form.Group>
                 <Form.Label>
-                  Animal
+                  पशु चुनें / Animal
                 </Form.Label>
 
                 <Form.Select
@@ -318,7 +316,7 @@ export default function MilkProduction() {
                   }
                 >
                   <option value="">
-                    All Animals
+                    सभी पशु / All Animals
                   </option>
 
                   {animals.map((animal) => (
@@ -339,7 +337,7 @@ export default function MilkProduction() {
             <div className="col-md-4">
               <Form.Group>
                 <Form.Label>
-                  Date
+                  तारीख / Date
                 </Form.Label>
 
                 <Form.Control
@@ -360,7 +358,7 @@ export default function MilkProduction() {
                 className="w-100"
                 onClick={clearFilters}
               >
-                Clear Filters
+                फ़िल्टर हटाएँ / Clear Filters
               </Button>
             </div>
 
@@ -372,10 +370,9 @@ export default function MilkProduction() {
       <div className="row g-3 mb-4">
 
         <div className="col-md-4">
-          <Card className="border-0 shadow-sm">
+          <Card className="mp-summary-card mp-morning">
             <Card.Body>
-              <div className="text-muted small">
-                Morning Production
+              <div className="text-muted small">🌅 सुबह का दूध / Morning Production
               </div>
 
               <div className="fs-3 fw-bold">
@@ -386,10 +383,9 @@ export default function MilkProduction() {
         </div>
 
         <div className="col-md-4">
-          <Card className="border-0 shadow-sm">
+          <Card className="mp-summary-card mp-evening">
             <Card.Body>
-              <div className="text-muted small">
-                Evening Production
+              <div className="text-muted small">🌇 शाम का दूध / Evening Production
               </div>
 
               <div className="fs-3 fw-bold">
@@ -400,10 +396,9 @@ export default function MilkProduction() {
         </div>
 
         <div className="col-md-4">
-          <Card className="border-0 shadow-sm">
+          <Card className="mp-summary-card mp-total">
             <Card.Body>
-              <div className="text-muted small">
-                Total Production
+              <div className="text-muted small">🥛 कुल दूध / Total Production
               </div>
 
               <div className="fs-3 fw-bold text-success">
@@ -416,7 +411,7 @@ export default function MilkProduction() {
       </div>
 
       {/* Production Table */}
-      <Card className="border-0 shadow-sm">
+      <Card className="mp-table-card">
         <Card.Body className="p-0">
 
           {loading ? (
@@ -429,7 +424,7 @@ export default function MilkProduction() {
             </div>
           ) : production.length === 0 ? (
             <div className="text-center py-5 text-muted">
-              No milk production records found.
+              अभी कोई रिकॉर्ड नहीं है / No milk production records found.
             </div>
           ) : (
             <div className="table-responsive">
@@ -438,14 +433,14 @@ export default function MilkProduction() {
                 hover
                 className="mb-0 align-middle"
               >
-                <thead className="table-light">
+                <thead className="mp-table-head">
                   <tr>
-                    <th>Date</th>
-                    <th>Animal</th>
-                    <th>Morning</th>
-                    <th>Evening</th>
-                    <th>Total</th>
-                    <th>Note</th>
+                    <th>तारीख / Date</th>
+                    <th>पशु / Animal</th>
+                    <th>🌅 सुबह / Morning</th>
+                    <th>🌇 शाम / Evening</th>
+                    <th>कुल / Total</th>
+                    <th>नोट / Note</th>
 
                     {canManage && (
                       <th className="text-end">

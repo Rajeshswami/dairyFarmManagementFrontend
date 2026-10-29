@@ -1,0 +1,233 @@
+/* AgroControl-inspired full application theme. Existing app logic is unchanged. */
+/* =========================================================
+   AgroControl-inspired visual system — full application
+   Preserves existing routes, API calls and business logic.
+   ========================================================= */
+:root {
+  --agro-forest: #183d2b;
+  --agro-forest-2: #24583a;
+  --agro-green: #39784a;
+  --agro-lime: #d9ed8b;
+  --agro-lime-2: #eef6c9;
+  --agro-wheat: #f4e5ad;
+  --agro-cream: #f7f8ef;
+  --agro-paper: #ffffff;
+  --agro-ink: #1e3024;
+  --agro-muted: #758176;
+  --agro-line: #e4e9dc;
+  --agro-shadow: 0 12px 34px rgba(35, 63, 38, .065);
+}
+html, body, #root { min-height: 100%; }
+body { background: var(--agro-cream) !important; color: var(--agro-ink) !important; }
+.app-layout { background: var(--agro-cream); }
+.sidebar {
+  background: var(--agro-forest) !important;
+  color: #f8faef !important;
+  width: 258px;
+  padding: 0 13px 18px;
+  border-right: 1px solid rgba(255,255,255,.06);
+  box-shadow: 8px 0 30px rgba(21, 52, 31, .055) !important;
+}
+.sidebar-brand {
+  min-height: 92px;
+  margin: 0 -13px 13px;
+  padding: 20px 20px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.12) !important;
+  gap: 12px;
+}
+.brand-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  background: var(--agro-lime);
+  color: var(--agro-forest);
+  font-size: 26px;
+  box-shadow: 0 5px 16px rgba(0,0,0,.12);
+}
+.brand-title { color: #fff; font-size: 16px; font-weight: 850; letter-spacing: -.025em; }
+.brand-subtitle { color: #bdcfb9; font-size: 11px; margin-top: 3px; }
+.sidebar-nav { padding: 7px 0 16px !important; }
+.sidebar-nav::before {
+  content: "FARM WORKSPACE";
+  display: block;
+  padding: 11px 12px 9px;
+  color: #91ad93;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+.sidebar-link {
+  display: flex !important;
+  align-items: center;
+  gap: 11px;
+  min-height: 47px;
+  margin: 3px 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 13px !important;
+  border: 1px solid transparent;
+  color: #d0decf !important;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+.sidebar-link:hover { color: #fff !important; background: rgba(255,255,255,.075) !important; transform: translateX(2px); }
+.sidebar-link.active {
+  background: var(--agro-lime) !important;
+  border-color: rgba(255,255,255,.18) !important;
+  color: var(--agro-forest) !important;
+  box-shadow: 0 7px 18px rgba(0,0,0,.1);
+}
+.sidebar-link-icon {
+  display: inline-grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 9px;
+  background: rgba(255,255,255,.075);
+  color: #e0edbe;
+  font-size: 16px;
+}
+.sidebar-link.active .sidebar-link-icon { color: var(--agro-forest); background: rgba(24,61,43,.09); }
+.sidebar-link-label { flex: 1; }
+.sidebar-link-arrow { opacity: .6; font-size: 20px; line-height: 1; }
+.sidebar-link.active .sidebar-link-arrow { opacity: 1; }
+.main-area { margin-left: 258px; width: calc(100% - 258px); background: var(--agro-cream); }
+.app-header {
+  min-height: 82px;
+  padding: 15px clamp(18px, 3vw, 36px);
+  background: rgba(255,255,255,.94) !important;
+  border-bottom: 1px solid var(--agro-line) !important;
+  box-shadow: 0 4px 18px rgba(31,57,33,.025);
+  backdrop-filter: blur(14px);
+}
+.header-title h5 { color: var(--agro-forest); font-size: 17px; font-weight: 850; letter-spacing: -.035em; }
+.header-title small { color: var(--agro-muted) !important; font-size: 11px; }
+.header-user { gap: 13px; }
+.user-info { padding-left: 13px; border-left: 1px solid var(--agro-line); }
+.user-info strong { color: var(--agro-ink); font-size: 12px; }
+.user-info small { color: var(--agro-muted); font-size: 10px; }
+.language-picker { min-height: 38px !important; border-radius: 11px !important; background: #f8faf3 !important; }
+.mobile-menu-button { border-color: var(--agro-line) !important; border-radius: 12px !important; }
+.mobile-menu-button span { background: var(--agro-forest) !important; }
+.page-content { padding: clamp(18px, 3vw, 34px); }
+.page-content > * { min-width: 0; }
+.page-heading { margin: 9px 0 23px !important; }
+.page-heading h2, .page-content h2 { color: var(--agro-forest); font-weight: 850; letter-spacing: -.045em; }
+.page-heading p, .page-content .text-muted { color: var(--agro-muted) !important; }
+.section-title { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; color: var(--agro-forest); font-weight: 850; letter-spacing: -.02em; }
+.section-title small { color: var(--agro-muted); font-size: 11px; font-weight: 600; }
+.card, .stat-card, .farmer-payment-card, .mp-filter-card, .farmer-reports-card {
+  border: 1px solid var(--agro-line) !important;
+  border-radius: 19px !important;
+  background: var(--agro-paper) !important;
+  box-shadow: var(--agro-shadow) !important;
+}
+.card { overflow: hidden; }
+.card-header { border-bottom: 1px solid #edf0e8 !important; background: #fff !important; }
+.card-header h5, .card-header h6 { color: var(--agro-forest); }
+.stat-card { min-height: 155px; padding: 21px !important; }
+.stat-card-icon { border-radius: 14px !important; background: var(--agro-lime-2) !important; color: var(--agro-forest); }
+.stat-title { color: var(--agro-muted) !important; }
+.stat-value { color: var(--agro-forest) !important; }
+.btn { font-weight: 800 !important; letter-spacing: -.01em; transition: transform .15s ease, box-shadow .15s ease; }
+.btn:hover { transform: translateY(-1px); }
+.btn-success, .btn-primary, .farmer-payment-primary, .animal-add-btn {
+  --bs-btn-bg: var(--agro-forest);
+  --bs-btn-border-color: var(--agro-forest);
+  --bs-btn-hover-bg: var(--agro-forest-2);
+  --bs-btn-hover-border-color: var(--agro-forest-2);
+  background: var(--agro-forest) !important;
+  border-color: var(--agro-forest) !important;
+  color: #fff !important;
+  box-shadow: 0 5px 13px rgba(24,61,43,.13);
+}
+.btn-warning { --bs-btn-bg: #e5c65d; --bs-btn-border-color: #e5c65d; --bs-btn-color: #263b24; }
+.btn-outline-success { --bs-btn-color: var(--agro-forest); --bs-btn-border-color: #b9cdb7; --bs-btn-hover-bg: var(--agro-forest); --bs-btn-hover-border-color: var(--agro-forest); }
+.btn-outline-primary { --bs-btn-color: var(--agro-forest); --bs-btn-border-color: #b9cdb7; --bs-btn-hover-bg: var(--agro-forest); --bs-btn-hover-border-color: var(--agro-forest); }
+.btn-outline-secondary { --bs-btn-color: #5c6e5d; --bs-btn-border-color: #dce5d9; }
+.form-control, .form-select {
+  min-height: 44px;
+  border: 1px solid #dfe7d8 !important;
+  border-radius: 11px !important;
+  background-color: #fff !important;
+  color: var(--agro-ink) !important;
+  font-size: 13px;
+}
+.form-control:focus, .form-select:focus { border-color: #91b86e !important; box-shadow: 0 0 0 .22rem rgba(134,177,83,.16) !important; }
+.form-label { color: #445847 !important; font-size: 11px; font-weight: 850 !important; }
+.table-responsive { border: 1px solid #e9eee4 !important; border-radius: 15px !important; background: #fff; }
+.table { --bs-table-bg: transparent; --bs-table-striped-bg: #fafbf7; --bs-table-hover-bg: #f5f8ed; color: var(--agro-ink); }
+.table thead th { padding: 14px 15px !important; border-bottom: 1px solid #e6ecdf !important; background: #f4f7ec !important; color: #6b7b67 !important; font-size: 10px !important; font-weight: 900 !important; letter-spacing: .075em; text-transform: uppercase; white-space: nowrap; }
+.table tbody td { padding: 14px 15px !important; border-color: #edf0e9 !important; color: #344838; font-size: 12px; }
+.table tbody tr:hover > * { --bs-table-bg: #f8faef; }
+.badge { padding: .48em .7em !important; border-radius: 8px !important; font-size: 10px !important; font-weight: 850 !important; }
+.alert { border: 1px solid transparent !important; border-radius: 14px !important; }
+.modal-content { border: 1px solid #dfe8d8 !important; border-radius: 21px !important; box-shadow: 0 24px 75px rgba(22,53,31,.2) !important; }
+.modal-header { padding: 20px 24px !important; background: #f7f9f0 !important; border-bottom: 1px solid var(--agro-line) !important; }
+.modal-title { color: var(--agro-forest); font-weight: 850 !important; }
+.modal-body { padding: 23px 24px !important; }
+.modal-footer { background: #fbfcf8; border-top: 1px solid var(--agro-line) !important; }
+.page-loading { color: var(--agro-muted); }
+.page-loading .spinner-border { color: var(--agro-green); }
+.page-hero {
+  border: 1px solid #e3eacb !important;
+  border-radius: 25px !important;
+  background: radial-gradient(circle at 87% 5%, rgba(217,237,139,.7), transparent 26%), linear-gradient(120deg,#edf4d7 0%,#f9faef 53%,#e7f0d8 100%) !important;
+  box-shadow: 0 14px 35px rgba(51,79,39,.055) !important;
+}
+.page-hero h1 { color: var(--agro-forest) !important; font-weight: 900 !important; letter-spacing: -.05em !important; }
+.page-hero p { color: #5f705f !important; }
+.page-hero .eyebrow { color: #547c3d !important; }
+.page-hero-period { border-color: #e4eacb !important; background: rgba(255,255,255,.75) !important; }
+.page-hero-period span, .page-hero-period small { color: #75836c !important; }
+.page-hero-period strong { color: var(--agro-forest) !important; }
+/* Domain-specific screens */
+.animal-phase9 .animal-add-btn { border-radius: 12px; }
+.farmer-payment-hero { border-radius: 22px !important; background: linear-gradient(120deg,#edf4d7,#f8faef) !important; border: 1px solid #e2eacb !important; }
+.farmer-payment-hero h1, .farmer-payment-hero h2 { color: var(--agro-forest) !important; }
+.farmer-payment-summary { border-radius: 15px !important; }
+.farmer-payment-table thead th { background: #f4f7ec !important; }
+.mp-hero { border-radius: 22px !important; background: linear-gradient(120deg,#edf4d7,#f8faef) !important; border: 1px solid #e2eacb !important; }
+.mp-hero h1, .mp-hero h2 { color: var(--agro-forest) !important; }
+.voice-assistant-page, .voice-assistant-container { color: var(--agro-ink); }
+.voice-assistant-page .card, .voice-assistant-container .card { border-radius: 22px !important; }
+.voice-assistant-page button, .voice-assistant-container button { touch-action: manipulation; }
+/* Login remains part of the same design system */
+.login-page { background: radial-gradient(circle at 15% 20%, rgba(217,237,139,.55), transparent 30%), radial-gradient(circle at 85% 85%, rgba(57,120,74,.13), transparent 28%), linear-gradient(135deg,#f7f8ef,#edf3e5) !important; }
+.login-card { border: 1px solid rgba(255,255,255,.92) !important; border-radius: 26px !important; }
+:focus-visible { outline: 3px solid rgba(168,205,83,.55) !important; outline-offset: 2px; }
+@media (max-width: 1199.98px) {
+  .sidebar { width: 258px; }
+  .main-area { margin-left: 258px; width: calc(100% - 258px); }
+}
+@media (max-width: 991.98px) {
+  .sidebar { width: min(292px, 88vw); padding: 0 13px 18px; }
+  .main-area { margin-left: 0; width: 100%; }
+  .app-header { min-height: 70px; padding: 11px 16px; }
+  .page-content { padding: 19px 16px; }
+  .sidebar-overlay { background: rgba(14,38,22,.52) !important; backdrop-filter: blur(3px); }
+}
+@media (max-width: 575.98px) {
+  .app-header { min-height: 62px; padding: 9px 11px; }
+  .header-title h5 { font-size: 13px; }
+  .header-title small { display: none; }
+  .header-user { gap: 6px; }
+  .language-picker { max-width: 80px; min-height: 36px !important; padding-left: 8px; }
+  .logout-button { min-height: 36px !important; padding: .4rem .55rem !important; font-size: 10px !important; }
+  .page-content { padding: 14px 11px 24px; }
+  .page-heading { align-items: stretch; }
+  .dashboard-filters { width: 100%; }
+  .dashboard-filters .form-select { min-width: 0; flex: 1; }
+  .stat-card { min-height: 132px; padding: 16px !important; }
+  .stat-card-icon { width: 38px; height: 38px; margin-bottom: 11px; }
+  .stat-value { font-size: 1.4rem !important; }
+  .card-body { padding: 15px !important; }
+  .card-body.p-0 { padding: 0 !important; }
+  .table thead th, .table tbody td { padding: 11px 10px !important; }
+  .modal-body { padding: 18px !important; }
+  .farmer-payment-hero, .mp-hero, .page-hero { border-radius: 18px !important; }
+}
+

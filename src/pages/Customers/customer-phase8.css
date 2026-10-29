@@ -1,0 +1,17 @@
+.customer-overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0 0 22px}
+.customer-overview-card{border:1px solid #e2ece5;border-radius:17px;overflow:hidden;box-shadow:0 5px 18px rgba(25,70,45,.045)}
+.customer-overview-card .card-body{padding:19px 22px}
+.customer-overview-total{background:linear-gradient(135deg,#fff 50%,#f0f7ff)}
+.customer-overview-active{background:linear-gradient(135deg,#fff 50%,#e9f8ee);border-color:#d4eadb}
+.customer-overview-inactive{background:linear-gradient(135deg,#fff 50%,#fff5e8)}
+.customer-overview-label{font-size:13px;font-weight:750;color:#607267}
+.customer-overview-value{font-size:32px;font-weight:850;line-height:1.2;letter-spacing:-.7px;color:#1c5137;margin:9px 0 4px;font-variant-numeric:tabular-nums}
+.customer-overview-hint{font-size:12px;color:#849188}
+.customer-phase8 .farmer-page-title{color:#183e2c}
+.customer-phase8 .farmer-customer-panel{border:1px solid #e3ece5;border-radius:18px;overflow:hidden}
+.customer-phase8 .farmer-customer-card{background:linear-gradient(155deg,#fff 60%,#f7fbf8)}
+.customer-phase8 .farmer-customer-card.is-inactive{background:#fbfbfa}
+.customer-phase8 .farmer-search-input{border-color:#dce8df}
+.customer-phase8 .farmer-customer-card .card-body{padding:19px}
+.customer-phase8 .farmer-customer-actions .btn{min-height:46px}
+@media(max-width:767px){.customer-overview-grid{grid-template-columns:1fr;gap:10px}.customer-overview-card .card-body{padding:15px 18px}.customer-overview-value{font-size:28px;margin:5px 0 2px}.customer-overview-hint{font-size:11px}}

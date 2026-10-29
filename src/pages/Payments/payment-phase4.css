@@ -1,0 +1,56 @@
+.farmer-payments-page { --pay-ink:#193d35; --pay-muted:#62756e; --pay-green:#176b4b; --pay-border:#e0e9e2; color:var(--pay-ink); }
+.farmer-payment-hero { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:clamp(22px,4vw,36px); margin-bottom:24px; border-radius:24px; background:linear-gradient(115deg,#e3f3e8 0%,#f8f5e8 62%,#f9e7d4 100%); }
+.farmer-payment-hero h1 { margin:8px 0; font-size:clamp(1.8rem,4vw,2.7rem); font-weight:800; letter-spacing:-.035em; }
+.farmer-payment-hero p { margin:0; max-width:560px; color:#4e675e; font-size:1.05rem; }
+.farmer-eyebrow { font-size:.78rem; letter-spacing:.12em; font-weight:800; color:#3c7760; }
+.farmer-payment-hero-icon { display:grid; place-items:center; flex:0 0 auto; width:82px; height:82px; border-radius:24px; background:#176b4b; color:#fff; font-size:2.6rem; font-weight:800; box-shadow:0 10px 24px #176b4b22; }
+.farmer-payment-card { border:1px solid var(--pay-border); border-radius:20px; box-shadow:0 8px 28px #1a45310a; }
+.farmer-payment-card>.card-body { padding:clamp(16px,3vw,26px); }
+.farmer-large-label { display:block; margin-bottom:9px; font-size:1.05rem; font-weight:750; color:#254b3e; }
+.farmer-large-control { min-height:54px; border-radius:13px; border-color:#d6e2d9; font-size:1.05rem; }
+.farmer-large-control:focus { border-color:#58a57b; box-shadow:0 0 0 .22rem #58a57b25; }
+.farmer-payment-summary-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-bottom:22px; }
+.farmer-payment-summary { border:1px solid var(--pay-border); border-radius:18px; overflow:hidden; }
+.farmer-payment-summary .card-body { display:flex; flex-direction:column; gap:7px; padding:20px; }
+.farmer-payment-summary span,.farmer-payment-summary small { color:#62756e; }
+.farmer-payment-summary strong { font-size:clamp(1.3rem,2.5vw,1.9rem); font-weight:850; color:#193d35; overflow-wrap:anywhere; }
+.farmer-payment-summary--blue { background:#edf5ff; border-color:#d7e7fb; }
+.farmer-payment-summary--green { background:#e8f6eb; border-color:#d3ead9; }
+.farmer-payment-summary--gold { background:#fff4d9; border-color:#f2e2b7; }
+.farmer-payment-action-row,.farmer-payment-section-heading { display:flex; align-items:center; justify-content:space-between; gap:18px; }
+.farmer-payment-action-row h2,.farmer-payment-section-heading h2 { margin:0 0 5px; font-size:1.3rem; font-weight:800; }
+.farmer-payment-action-row p,.farmer-payment-section-heading p { margin:0; color:var(--pay-muted); }
+.farmer-payment-primary { min-height:54px; padding:12px 22px; border:0; border-radius:14px; background:#176b4b; color:#fff; font-size:1.02rem; font-weight:800; white-space:normal; }
+.farmer-payment-primary:hover,.farmer-payment-primary:focus { background:#10573b; }
+.farmer-payment-total-paid { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+.farmer-payment-total-paid span,.farmer-payment-mini-stats span { color:var(--pay-muted); font-size:.9rem; }
+.farmer-payment-total-paid strong { color:#176b4b; font-size:1.35rem; }
+.farmer-payment-mini-stats { display:flex; gap:12px; margin:18px 0; }
+.farmer-payment-mini-stats>div { display:flex; flex-direction:column; gap:4px; min-width:145px; padding:13px 16px; border-radius:13px; background:#f5f8f5; }
+.farmer-payment-mini-stats strong { font-size:1.05rem; }
+.farmer-payment-table { min-width:680px; }
+.farmer-payment-table th { padding:14px 12px; background:#f4f8f4; color:#536b60; font-size:.84rem; white-space:nowrap; }
+.farmer-payment-table td { padding:14px 12px; }
+.farmer-payment-edit { min-height:38px; border-radius:10px; }
+.farmer-payment-state { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; min-height:170px; color:var(--pay-muted); text-align:center; }
+.farmer-payment-state strong { color:var(--pay-ink); font-size:1.05rem; }
+.farmer-payment-empty-icon { display:grid; place-items:center; width:50px; height:50px; border-radius:16px; background:#e6f3e9; color:#176b4b; font-size:1.6rem; font-weight:800; }
+.farmer-payment-modal .modal-content { overflow:hidden; border:0; border-radius:22px; }
+.farmer-payment-modal .modal-header,.farmer-payment-modal .modal-footer { padding:18px 22px; }
+.farmer-payment-modal .modal-title { font-weight:850; }
+.farmer-payment-modal .modal-body { padding:22px; }
+.farmer-payment-modal-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-bottom:20px; padding:14px; border-radius:14px; background:#f0f7f1; }
+.farmer-payment-modal-summary>div { display:flex; flex-direction:column; gap:5px; min-width:0; }
+.farmer-payment-modal-summary span { color:#62756e; font-size:.82rem; }
+.farmer-payment-modal-summary strong { font-size:1rem; overflow-wrap:anywhere; }
+.farmer-payment-amount-input { font-size:1.5rem; font-weight:800; }
+.farmer-quick-amounts>span { display:block; margin-bottom:8px; font-weight:750; color:#536b60; }
+.farmer-quick-amounts>div { display:flex; flex-wrap:wrap; gap:8px; }
+.farmer-quick-amounts .btn { min-height:44px; border-radius:11px; font-weight:750; }
+.farmer-payment-methods { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.farmer-payment-method { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; min-height:90px; padding:12px 8px; border:2px solid #dce7de; border-radius:14px; background:#fff; color:#254b3e; }
+.farmer-payment-method span { font-size:1.6rem; }
+.farmer-payment-method strong { font-size:1rem; }
+.farmer-payment-method.is-selected { border-color:#248457; background:#e8f6eb; box-shadow:0 0 0 2px #24845716; }
+.farmer-payment-modal-footer .btn { min-height:50px; border-radius:12px; }
+@media(max-width:700px) { .farmer-payment-hero { padding:20px; border-radius:18px; } .farmer-payment-hero-icon { width:58px; height:58px; border-radius:17px; font-size:1.9rem; } .farmer-payment-summary-grid { grid-template-columns:1fr; gap:10px; } .farmer-payment-summary .card-body { display:grid; grid-template-columns:1fr auto; align-items:center; gap:5px 12px; padding:16px; } .farmer-payment-summary strong { grid-column:2; grid-row:1 / span 2; text-align:right; } .farmer-payment-summary small { grid-column:1; } .farmer-payment-action-row,.farmer-payment-section-heading { align-items:stretch; flex-direction:column; } .farmer-payment-action-row .btn { width:100%; } .farmer-payment-total-paid { align-items:flex-start; } .farmer-payment-mini-stats { flex-wrap:wrap; } .farmer-payment-mini-stats>div { flex:1; min-width:120px; } .farmer-payment-modal-summary { grid-template-columns:1fr; } .farmer-payment-modal-summary>div { flex-direction:row; justify-content:space-between; } .farmer-payment-modal .modal-body { padding:16px; } .farmer-payment-modal-footer { display:grid; grid-template-columns:1fr; } .farmer-payment-modal-footer .btn { width:100%; } }

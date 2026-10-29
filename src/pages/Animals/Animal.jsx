@@ -20,6 +20,7 @@ import {
 } from '../../api/animals.api';
 
 import AnimalForm from './AnimalForm';
+import './animal-phase9.css';
 
 export default function Animals() {
   const { user } = useAuth();
@@ -175,20 +176,20 @@ export default function Animals() {
   };
 
   return (
-    <div>
+    <div className="animal-phase9">
 
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="mb-1">Animals</h2>
+          <h2 className="mb-1">पशु प्रबंधन <span className="animal-en-title">/ Animals</span></h2>
           <p className="text-muted mb-0">
-            Manage farm animals and their status.
+            अपने पशुओं का रिकॉर्ड और स्थिति आसानी से संभालें। / Manage animals and their status.
           </p>
         </div>
 
         {canManage && (
-          <Button variant="primary" onClick={handleAdd}>
-            + Add Animal
+          <Button className="animal-add-btn" onClick={handleAdd}>
+            ＋ पशु जोड़ें / Add Animal
           </Button>
         )}
       </div>
@@ -215,7 +216,7 @@ export default function Animals() {
             </InputGroup.Text>
 
             <Form.Control
-              placeholder="Search by tag, name, breed, gender or status..."
+              placeholder="टैग, नाम, नस्ल या स्थिति खोजें / Search animals..."
               value={search}
               onChange={(event) =>
                 setSearch(event.target.value)
@@ -232,7 +233,7 @@ export default function Animals() {
           <Card className="border-0 shadow-sm">
             <Card.Body>
               <div className="text-muted small">
-                Total Animals
+                कुल पशु / Total Animals
               </div>
 
               <div className="fs-3 fw-bold">
@@ -246,7 +247,7 @@ export default function Animals() {
           <Card className="border-0 shadow-sm">
             <Card.Body>
               <div className="text-muted small">
-                Active Animals
+                सक्रिय पशु / Active Animals
               </div>
 
               <div className="fs-3 fw-bold text-success">
@@ -265,7 +266,7 @@ export default function Animals() {
           <Card className="border-0 shadow-sm">
             <Card.Body>
               <div className="text-muted small">
-                Inactive Animals
+                निष्क्रिय पशु / Inactive Animals
               </div>
 
               <div className="fs-3 fw-bold">
@@ -290,14 +291,14 @@ export default function Animals() {
             <div className="text-center py-5">
               <Spinner animation="border" />
               <div className="text-muted mt-2">
-                Loading animals...
+                पशुओं का रिकॉर्ड लोड हो रहा है… / Loading animals...
               </div>
             </div>
           ) : filteredAnimals.length === 0 ? (
             <div className="text-center py-5 text-muted">
               {search
-                ? 'No animals found.'
-                : 'No animals available.'}
+                ? 'कोई पशु नहीं मिला / No animals found.'
+                : 'अभी कोई पशु दर्ज नहीं है / No animals available.'}
             </div>
           ) : (
             <div className="table-responsive">
@@ -309,17 +310,17 @@ export default function Animals() {
               >
                 <thead className="table-light">
                   <tr>
-                    <th>Tag</th>
-                    <th>Name</th>
-                    <th>Breed</th>
-                    <th>Gender</th>
-                    <th>Date of Birth</th>
-                    <th>Purchase Price</th>
-                    <th>Status</th>
+                    <th>टैग / Tag</th>
+                    <th>नाम / Name</th>
+                    <th>नस्ल / Breed</th>
+                    <th>लिंग / Gender</th>
+                    <th>जन्म तारीख / DOB</th>
+                    <th>खरीद मूल्य / Price</th>
+                    <th>स्थिति / Status</th>
 
                     {canManage && (
                       <th className="text-end">
-                        Actions
+                        कार्य / Actions
                       </th>
                     )}
                   </tr>

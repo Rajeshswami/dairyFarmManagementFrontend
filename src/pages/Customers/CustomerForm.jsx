@@ -22,7 +22,7 @@ const initialForm = {
 
 const quantityOptions = Array.from({ length: 41 }, (_, index) => {
   const value = index * 0.25;
-  const label = value === 0 ? 'No milk' : `${Number(value.toFixed(2))} L`;
+  const label = value === 0 ? (localStorage.getItem('dairy-app-language') === 'hi' ? 'दूध नहीं' : 'No milk') : `${Number(value.toFixed(2))} L`;
   return { value, label };
 });
 
@@ -33,8 +33,15 @@ export default function CustomerForm({
   customer,
   loading,
 }) {
-  const [form, setForm] =
-    useState(initialForm);
+  const [form, setForm] = useState(initialForm);
+  const [language, setLanguage] = useState(() => localStorage.getItem("dairy-app-language") || "hi");
+  const isHindi = language === "hi";
+
+  useEffect(() => {
+    const syncLanguage = (event) => setLanguage(event.detail || localStorage.getItem("dairy-app-language") || "hi");
+    window.addEventListener("dairy-language-change", syncLanguage);
+    return () => window.removeEventListener("dairy-language-change", syncLanguage);
+  }, []);
 
   const [error, setError] = useState('');
 
@@ -93,17 +100,17 @@ export default function CustomerForm({
     setError('');
 
     if (!form.name.trim()) {
-      setError('Customer name is required');
+      setError(isHindi ? 'ग्राहक का नाम लिखें।' : 'Customer name is required');
       return;
     }
 
     if (!form.mobile.trim()) {
-      setError('Mobile number is required');
+      setError(isHindi ? 'मोबाइल नंबर लिखें।' : 'Mobile number is required');
       return;
     }
 
     if (!form.startDate) {
-      setError('Start date is required');
+      setError(isHindi ? 'शुरू करने की तारीख चुनें।' : 'Start date is required');
       return;
     }
 
@@ -119,7 +126,7 @@ export default function CustomerForm({
     } catch (error) {
       const message =
         error.response?.data?.message ||
-        'Failed to save customer';
+        (isHindi ? 'ग्राहक की जानकारी सेव नहीं हुई।' : 'Failed to save customer');
 
       setError(
         Array.isArray(message)
@@ -139,8 +146,8 @@ export default function CustomerForm({
         <Modal.Header closeButton>
           <Modal.Title>
             {isEditing
-              ? 'Edit Customer'
-              : 'Add Customer'}
+              ? (isHindi ? 'ग्राहक की जानकारी बदलें' : 'Edit customer')
+              : (isHindi ? 'नया ग्राहक जोड़ें' : 'Add customer')}
           </Modal.Title>
         </Modal.Header>
 
@@ -153,35 +160,35 @@ export default function CustomerForm({
 
           <Form.Group className="mb-3">
             <Form.Label>
-              Customer Name
+              {isHindi ? "ग्राहक का नाम" : "Customer Name"}
             </Form.Label>
 
             <Form.Control
               name="name"
               value={form.name}
               onChange={handleChange}
-              placeholder="Enter customer name"
+              placeholder={isHindi ? "ग्राहक का नाम लिखें" : "Enter customer name"}
               required
             />
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label>
-              Mobile Number
+              {isHindi ? "मोबाइल नंबर" : "Mobile Number"}
             </Form.Label>
 
             <Form.Control
               name="mobile"
               value={form.mobile}
               onChange={handleChange}
-              placeholder="Enter mobile number"
+              placeholder={isHindi ? "मोबाइल नंबर लिखें" : "Enter mobile number"}
               required
             />
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label>
-              Address
+              {isHindi ? "पता" : "Address"}
             </Form.Label>
 
             <Form.Control
@@ -190,7 +197,7 @@ export default function CustomerForm({
               name="address"
               value={form.address}
               onChange={handleChange}
-              placeholder="Enter address"
+              placeholder={isHindi ? "पता लिखें" : "Enter address"}
             />
           </Form.Group>
 
@@ -198,7 +205,7 @@ export default function CustomerForm({
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>
-                  Morning Milk
+                  {isHindi ? "सुबह का दूध" : "Morning Milk"}
                 </Form.Label>
 
                 <Form.Select
@@ -223,7 +230,7 @@ export default function CustomerForm({
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>
-                  Evening Milk
+                  {isHindi ? "शाम का दूध" : "Evening Milk"}
                 </Form.Label>
 
                 <Form.Select
@@ -248,7 +255,7 @@ export default function CustomerForm({
 
           <Form.Group>
             <Form.Label>
-              Start Date
+              {isHindi ? "शुरू करने की तारीख" : "Start Date"}
             </Form.Label>
 
             <Form.Control
@@ -261,7 +268,7 @@ export default function CustomerForm({
           </Form.Group>
 
           <Form.Group className="mt-3">
-            <Form.Label>Milk rate (₹ per litre)</Form.Label>
+            <Form.Label>{isHindi ? "दूध का भाव (₹ प्रति लीटर)" : "Milk rate (₹ per litre)"}</Form.Label>
             <Form.Control
               type="number"
               name="ratePerLiter"
@@ -281,7 +288,7 @@ export default function CustomerForm({
             onClick={onHide}
             disabled={loading}
           >
-            Cancel
+            {isHindi ? "रद्द करें" : "Cancel"}
           </Button>
 
           <Button
@@ -289,10 +296,10 @@ export default function CustomerForm({
             disabled={loading}
           >
             {loading
-              ? 'Saving...'
+              ? (isHindi ? 'सेव हो रहा है…' : 'Saving…')
               : isEditing
-              ? 'Update Customer'
-              : 'Add Customer'}
+              ? (isHindi ? 'जानकारी सेव करें' : 'Update customer')
+              : (isHindi ? 'नया ग्राहक जोड़ें' : 'Add customer')}
           </Button>
         </Modal.Footer>
       </Form>

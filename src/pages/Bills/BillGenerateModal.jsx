@@ -42,7 +42,7 @@ export default function BillGenerateModal({
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
           <Modal.Title>
-            Generate Monthly Bill
+            मासिक बिल बनाएँ / Generate Monthly Bill
           </Modal.Title>
         </Modal.Header>
 
@@ -56,7 +56,7 @@ export default function BillGenerateModal({
 
           <Form.Group className="mb-3">
             <Form.Label>
-              Customer *
+              ग्राहक चुनें / Customer *
             </Form.Label>
 
             <Form.Select
@@ -69,7 +69,7 @@ export default function BillGenerateModal({
               required
             >
               <option value="">
-                Select customer
+                ग्राहक चुनें / Select customer
               </option>
 
               {customers.map((customer) => (
@@ -86,7 +86,7 @@ export default function BillGenerateModal({
 
           <div className="p-3 bg-light rounded">
             <div className="small text-muted">
-              Billing Period
+              बिल का महीना / Billing Period
             </div>
 
             <strong>
@@ -102,7 +102,7 @@ export default function BillGenerateModal({
             onClick={onHide}
             disabled={loading}
           >
-            Cancel
+            रद्द करें / Cancel
           </Button>
 
           <Button
@@ -113,8 +113,8 @@ export default function BillGenerateModal({
             }
           >
             {loading
-              ? 'Generating...'
-              : 'Generate Bill'}
+              ? 'बिल बन रहा है…'
+              : 'बिल बनाएँ / Generate Bill'}
           </Button>
         </Modal.Footer>
       </Form>

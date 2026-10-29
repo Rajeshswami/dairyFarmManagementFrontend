@@ -25,6 +25,7 @@ import {
 } from "../../api/milkDelivery.api";
 
 import CustomerForm from "./CustomerForm";
+import "./customer-phase8.css";
 
 import { useAuth } from "../../context/AuthContext";
 
@@ -105,6 +106,14 @@ const formatMonth = (year, month) => {
 
 export default function Customers() {
   const { user } = useAuth();
+  const [language, setLanguage] = useState(() => localStorage.getItem("dairy-app-language") || "hi");
+  const isHindi = language === "hi";
+
+  useEffect(() => {
+    const syncLanguage = (event) => setLanguage(event.detail || localStorage.getItem("dairy-app-language") || "hi");
+    window.addEventListener("dairy-language-change", syncLanguage);
+    return () => window.removeEventListener("dairy-language-change", syncLanguage);
+  }, []);
 
   const [customers, setCustomers] = useState([]);
 
@@ -499,7 +508,7 @@ export default function Customers() {
 
   if (selectedCustomer) {
     return (
-      <div>
+      <div className="customer-phase8">
         {/* Header */}
         <div className="page-heading">
           <div>
@@ -512,7 +521,7 @@ export default function Customers() {
                 setMonthlyError("");
               }}
             >
-              ← Back to Customers
+              {isHindi ? "← ग्राहक सूची पर जाएँ" : "← Back to customers"}
             </Button>
 
             <h2 className="mb-1">
@@ -520,7 +529,7 @@ export default function Customers() {
             </h2>
 
             <p className="text-muted mb-0">
-              Monthly milk delivery records
+              {isHindi ? "महीने भर के दूध का हिसाब" : "Monthly milk delivery records"}
             </p>
           </div>
         </div>
@@ -578,7 +587,7 @@ export default function Customers() {
                   handlePreviousMonth
                 }
               >
-                ← Previous
+                {isHindi ? "← पिछला महीना" : "← Previous"}
               </Button>
 
               <h4 className="mb-0">
@@ -592,7 +601,7 @@ export default function Customers() {
                 variant="outline-primary"
                 onClick={handleNextMonth}
               >
-                Next →
+                {isHindi ? "अगला महीना →" : "Next →"}
               </Button>
             </div>
           </Card.Body>
@@ -707,7 +716,7 @@ export default function Customers() {
                     animation="border"
                   />
                 ) : (
-                  "Refresh"
+                  isHindi ? "फिर से देखें" : "Refresh"
                 )}
               </Button>
             </div>
@@ -820,26 +829,50 @@ export default function Customers() {
   // ---------------------------------------------------------
 
   return (
-    <div>
+    <div className="customer-phase8">
       {/* Heading */}
       <div className="page-heading">
         <div>
-          <h2>
-            Customers
+          <h2 className="farmer-page-title">
+            {isHindi ? "ग्राहक" : "Customers"}
           </h2>
 
-          <p className="text-muted mb-0">
-            Manage milk customers and
-            delivery schedules
+          <p className="text-muted mb-0 farmer-page-subtitle">
+            {isHindi ? "दूध लेने वाले लोगों का हिसाब रखें" : "Manage milk customers and delivery schedules"}
           </p>
         </div>
 
         {canManage && (
-          <Button onClick={handleAdd}>
-            + Add Customer
+          <Button className="farmer-primary-action" onClick={handleAdd}>
+            {isHindi ? "+ ग्राहक जोड़ें" : "+ Add customer"}
           </Button>
         )}
       </div>
+
+      {/* Customer overview */}
+      <section className="customer-overview-grid" aria-label={isHindi ? "ग्राहक सारांश" : "Customer overview"}>
+        <Card className="customer-overview-card customer-overview-total">
+          <Card.Body>
+            <div className="customer-overview-label">{isHindi ? "कुल ग्राहक" : "Total customers"}</div>
+            <div className="customer-overview-value">{customers.length}</div>
+            <div className="customer-overview-hint">{isHindi ? "सभी दर्ज ग्राहक" : "All registered customers"}</div>
+          </Card.Body>
+        </Card>
+        <Card className="customer-overview-card customer-overview-active">
+          <Card.Body>
+            <div className="customer-overview-label">{isHindi ? "चालू ग्राहक" : "Active customers"}</div>
+            <div className="customer-overview-value">{customers.filter((customer) => customer.active).length}</div>
+            <div className="customer-overview-hint">{isHindi ? "जिनकी डिलीवरी चालू है" : "Currently receiving service"}</div>
+          </Card.Body>
+        </Card>
+        <Card className="customer-overview-card customer-overview-inactive">
+          <Card.Body>
+            <div className="customer-overview-label">{isHindi ? "बंद ग्राहक" : "Inactive customers"}</div>
+            <div className="customer-overview-value">{customers.filter((customer) => !customer.active).length}</div>
+            <div className="customer-overview-hint">{isHindi ? "जिनकी डिलीवरी बंद है" : "Currently inactive"}</div>
+          </Card.Body>
+        </Card>
+      </section>
 
       {/* Error */}
       {error && (
@@ -856,38 +889,25 @@ export default function Customers() {
         </Alert>
       )}
 
-      {/* Customer table */}
-      <Card>
+      {/* Farmer-friendly customer cards */}
+      <Card className="farmer-customer-panel">
         <Card.Body>
-          <Row className="mb-3">
-            <Col md={5}>
+          <Row className="g-3 align-items-center mb-4">
+            <Col xs={12} md={7}>
+              <Form.Label className="farmer-field-label" htmlFor="customer-search">
+                {isHindi ? "ग्राहक खोजें" : "Find a customer"}
+              </Form.Label>
               <Form.Control
-                placeholder="Search by name, mobile or address..."
+                id="customer-search"
+                className="farmer-search-input"
+                placeholder={isHindi ? "नाम, मोबाइल या पता लिखें…" : "Search name, mobile or address…"}
                 value={search}
-                onChange={(event) =>
-                  setSearch(
-                    event.target.value
-                  )
-                }
+                onChange={(event) => setSearch(event.target.value)}
               />
             </Col>
-
-            <Col
-              md={7}
-              className="text-md-end mt-2 mt-md-0"
-            >
-              <span className="text-muted">
-                Showing{" "}
-                <strong>
-                  {
-                    filteredCustomers.length
-                  }
-                </strong>{" "}
-                of{" "}
-                <strong>
-                  {customers.length}
-                </strong>{" "}
-                customers
+            <Col xs={12} md={5} className="text-md-end">
+              <span className="farmer-result-count">
+                {isHindi ? "दिख रहे ग्राहक" : "Customers shown"}: <strong>{filteredCustomers.length}</strong> / {customers.length}
               </span>
             </Col>
           </Row>
@@ -895,198 +915,79 @@ export default function Customers() {
           {loading ? (
             <div className="page-loading">
               <Spinner animation="border" />
-
-              <span>
-                Loading customers...
-              </span>
+              <span>{isHindi ? "ग्राहक लोड हो रहे हैं…" : "Loading customers…"}</span>
             </div>
-          ) : filteredCustomers.length ===
-            0 ? (
-            <div className="text-center py-5">
-              <h5>
-                No customers found
-              </h5>
-
-              <p className="text-muted">
-                {search
-                  ? "Try a different search."
-                  : "Add your first customer to get started."}
-              </p>
+          ) : filteredCustomers.length === 0 ? (
+            <div className="farmer-empty-state">
+              <span className="farmer-empty-icon" aria-hidden="true">👥</span>
+              <h5>{isHindi ? "कोई ग्राहक नहीं मिला" : "No customers found"}</h5>
+              <p>{search
+                ? (isHindi ? "दूसरा नाम या मोबाइल नंबर खोजें।" : "Try another name or mobile number.")
+                : (isHindi ? "शुरू करने के लिए पहला ग्राहक जोड़ें।" : "Add your first customer to get started.")}</p>
+              {canManage && !search && (
+                <Button className="farmer-primary-action" onClick={handleAdd}>
+                  {isHindi ? "+ ग्राहक जोड़ें" : "+ Add customer"}
+                </Button>
+              )}
             </div>
           ) : (
-            <div className="table-responsive">
-              <Table
-                hover
-                responsive
-                className="align-middle"
-              >
-                <thead>
-                  <tr>
-                    <th>
-                      Customer
-                    </th>
+            <Row className="g-3 farmer-customer-grid">
+              {filteredCustomers.map((customer) => (
+                <Col xs={12} sm={6} xl={4} key={customer._id}>
+                  <Card className={`farmer-customer-card h-100 ${customer.active ? "is-active" : "is-inactive"}`}>
+                    <Card.Body className="d-flex flex-column">
+                      <div className="d-flex align-items-start gap-3 mb-3">
+                        <div className="farmer-customer-avatar" aria-hidden="true">
+                          {(customer.name || "?").trim().slice(0, 1).toLocaleUpperCase()}
+                        </div>
+                        <div className="flex-grow-1 min-w-0">
+                          <h3 className="farmer-customer-name">{customer.name}</h3>
+                          <div className="farmer-customer-mobile">{customer.mobile || (isHindi ? "मोबाइल नंबर नहीं है" : "No mobile number")}</div>
+                          {customer.address && <div className="farmer-customer-address">{customer.address}</div>}
+                        </div>
+                        <Badge bg={customer.active ? "success" : "secondary"} className="farmer-status-badge">
+                          {customer.active ? (isHindi ? "चालू" : "Active") : (isHindi ? "बंद" : "Inactive")}
+                        </Badge>
+                      </div>
 
-                    <th>
-                      Mobile
-                    </th>
+                      <div className="farmer-customer-details">
+                        <div className="farmer-customer-detail">
+                          <span>{isHindi ? "सुबह का दूध" : "Morning milk"}</span>
+                          <strong>{formatQuantity(customer.morning)}</strong>
+                        </div>
+                        <div className="farmer-customer-detail">
+                          <span>{isHindi ? "शाम का दूध" : "Evening milk"}</span>
+                          <strong>{formatQuantity(customer.evening)}</strong>
+                        </div>
+                        <div className="farmer-customer-detail farmer-rate-detail">
+                          <span>{isHindi ? "दूध का भाव" : "Milk rate"}</span>
+                          <strong>₹{Number(customer.ratePerLiter || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })} / L</strong>
+                        </div>
+                      </div>
 
-                    <th>
-                      Morning
-                    </th>
-
-                    <th>
-                      Evening
-                    </th>
-
-                    <th>
-                      Rate
-                    </th>
-
-                    <th>
-                      Status
-                    </th>
-
-                    {canManage && (
-                      <th className="text-end">
-                        Actions
-                      </th>
-                    )}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {filteredCustomers.map(
-                    (customer) => (
-                      <tr
-                        key={customer._id}
-                      >
-                        {/* Customer */}
-
-                        <td>
-                          <button
-                            type="button"
-                            className="btn btn-link p-0 text-decoration-none fw-semibold"
-                            onClick={() =>
-                              handleViewRecords(
-                                customer
-                              )
-                            }
-                          >
-                            {customer.name}
-                          </button>
-
-                          {customer.address && (
-                            <div>
-                              <small className="text-muted">
-                                {
-                                  customer.address
-                                }
-                              </small>
-                            </div>
-                          )}
-                        </td>
-
-                        {/* Mobile */}
-
-                        <td>
-                          {customer.mobile}
-                        </td>
-
-                        {/* Morning */}
-
-                        <td>
-                          {formatQuantity(
-                            customer.morning
-                          )}
-                        </td>
-
-                        {/* Evening */}
-
-                        <td>
-                          {formatQuantity(
-                            customer.evening
-                          )}
-                        </td>
-
-                        {/* Rate */}
-
-                        <td>
-                          ₹
-                          {Number(
-                            customer.ratePerLiter ||
-                              0
-                          )}
-                        </td>
-
-                        {/* Status */}
-
-                        <td>
-                          {customer.active ? (
-                            <Badge bg="success">
-                              Active
-                            </Badge>
-                          ) : (
-                            <Badge bg="secondary">
-                              Inactive
-                            </Badge>
-                          )}
-                        </td>
-
-                        {/* Actions */}
-
+                      <div className="farmer-customer-actions mt-auto pt-3">
+                        <Button className="farmer-view-action" onClick={() => handleViewRecords(customer)}>
+                          {isHindi ? "📒 हिसाब देखें" : "📒 View account"}
+                        </Button>
                         {canManage && (
-                          <td className="text-end">
-                            <Button
-                              variant="outline-secondary"
-                              size="sm"
-                              className="me-2"
-                              onClick={() =>
-                                handleViewRecords(
-                                  customer
-                                )
-                              }
-                            >
-                              View
+                          <div className="farmer-secondary-actions">
+                            <Button variant="outline-primary" onClick={() => handleEdit(customer)}>
+                              {isHindi ? "बदलें" : "Edit"}
                             </Button>
-
                             <Button
-                              variant="outline-primary"
-                              size="sm"
-                              className="me-2"
-                              onClick={() =>
-                                handleEdit(
-                                  customer
-                                )
-                              }
+                              variant={customer.active ? "outline-danger" : "outline-success"}
+                              onClick={() => handleToggleStatus(customer)}
                             >
-                              Edit
+                              {customer.active ? (isHindi ? "बंद करें" : "Deactivate") : (isHindi ? "चालू करें" : "Activate")}
                             </Button>
-
-                            <Button
-                              variant={
-                                customer.active
-                                  ? "outline-danger"
-                                  : "outline-success"
-                              }
-                              size="sm"
-                              onClick={() =>
-                                handleToggleStatus(
-                                  customer
-                                )
-                              }
-                            >
-                              {customer.active
-                                ? "Deactivate"
-                                : "Activate"}
-                            </Button>
-                          </td>
+                          </div>
                         )}
-                      </tr>
-                    )
-                  )}
-                </tbody>
-              </Table>
-            </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
           )}
         </Card.Body>
       </Card>

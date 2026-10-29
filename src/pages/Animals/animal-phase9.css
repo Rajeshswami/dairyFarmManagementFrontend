@@ -1,0 +1,25 @@
+
+.animal-phase9{--animal-green:#197447;--animal-deep:#155b39;color:#20392b;padding-bottom:24px}
+.animal-phase9> .d-flex.justify-content-between.align-items-center.mb-4{padding:25px 27px;margin-bottom:22px!important;border:1px solid #dceee1;border-radius:19px;background:linear-gradient(115deg,#e8f7ed,#f6fbf7 60%,#fff7e6);gap:18px}
+.animal-phase9 h2{font-size:clamp(24px,3vw,31px);font-weight:850;color:#183e2b;letter-spacing:-.5px}
+.animal-phase9 .animal-en-title{font-size:.58em;font-weight:600;color:#6a7e70;letter-spacing:0}
+.animal-phase9 .text-muted{color:#708177!important}
+.animal-phase9 .animal-add-btn{background:var(--animal-green);border-color:var(--animal-green);border-radius:11px;padding:11px 17px;font-weight:750;white-space:nowrap;box-shadow:0 5px 12px #19744720}
+.animal-phase9 .animal-add-btn:hover{background:var(--animal-deep);border-color:var(--animal-deep)}
+.animal-phase9 .card{border:1px solid #e4ece6!important;border-radius:16px;overflow:hidden;box-shadow:0 5px 18px rgba(25,70,45,.045)!important}
+.animal-phase9 .card-body{padding:19px}
+.animal-phase9 .row.g-3.mb-4>.col-md-4:nth-child(1) .card{background:linear-gradient(140deg,#fff 55%,#eff6ff)}
+.animal-phase9 .row.g-3.mb-4>.col-md-4:nth-child(2) .card{background:linear-gradient(140deg,#fff 55%,#e9f8ee);border-color:#d5eadc!important}
+.animal-phase9 .row.g-3.mb-4>.col-md-4:nth-child(3) .card{background:linear-gradient(140deg,#fff 55%,#fff5e9)}
+.animal-phase9 .row.g-3.mb-4 .text-muted{font-size:13px!important;font-weight:750}
+.animal-phase9 .row.g-3.mb-4 .fs-3{font-size:32px!important;font-weight:850!important;color:#1c5137;margin-top:8px}
+.animal-phase9 .input-group-text{border-color:#dce8df;background:#f3f8f4;color:var(--animal-green);border-radius:10px 0 0 10px}
+.animal-phase9 .form-control{min-height:46px;border-color:#dce8df;border-radius:0 10px 10px 0}
+.animal-phase9 .form-control:focus{border-color:#76b88e;box-shadow:0 0 0 .2rem #19744717}
+.animal-phase9 .table{min-width:760px}
+.animal-phase9 .table thead th{background:#f4f9f5;color:#4a6252;font-size:12px;font-weight:800;white-space:nowrap;border-bottom:1px solid #e4ece6;padding:15px 14px}
+.animal-phase9 .table tbody td{padding:14px;border-color:#edf2ee;color:#42584a;font-size:13px}
+.animal-phase9 .table tbody tr:last-child td{border-bottom:0}
+.animal-phase9 .table .btn{border-radius:8px;font-weight:700}
+.animal-phase9 .table .badge{padding:7px 9px;border-radius:8px}
+@media(max-width:767px){.animal-phase9> .d-flex.justify-content-between.align-items-center.mb-4{align-items:flex-start!important;flex-direction:column;padding:20px 17px;border-radius:16px}.animal-phase9 .animal-add-btn{width:100%;min-height:46px}.animal-phase9 .card-body{padding:15px}.animal-phase9 .row.g-3.mb-4 .fs-3{font-size:28px!important}.animal-phase9 .table{min-width:760px}}

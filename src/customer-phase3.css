@@ -1,0 +1,38 @@
+/* Phase 3 farmer-friendly customer cards */
+.farmer-customer-panel { border: 0; border-radius: 1.1rem; box-shadow: 0 8px 28px rgba(27, 76, 58, .08); }
+.farmer-page-title { font-size: clamp(1.65rem, 4vw, 2.15rem); font-weight: 800; letter-spacing: -.025em; }
+.farmer-page-subtitle { font-size: 1rem; }
+.farmer-field-label { display: block; font-weight: 750; margin-bottom: .5rem; }
+.farmer-search-input { min-height: 52px; border-radius: .9rem; font-size: 1rem; padding: .8rem 1rem; }
+.farmer-result-count { display: inline-block; padding: .65rem .85rem; border-radius: .8rem; background: #f0f7f1; color: #245c43; }
+.farmer-customer-card { border: 1px solid #e1ece4; border-radius: 1.15rem; box-shadow: 0 4px 16px rgba(27, 76, 58, .045); transition: transform .16s ease, box-shadow .16s ease; }
+.farmer-customer-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(27, 76, 58, .1); }
+.farmer-customer-card.is-inactive { background: #fbfbfa; }
+.farmer-customer-avatar { flex: 0 0 48px; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 16px; background: #dff1e4; color: #1e6848; font-size: 1.4rem; font-weight: 850; }
+.farmer-customer-name { font-size: 1.18rem; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; margin: 0 0 .2rem; }
+.farmer-customer-mobile { font-size: 1rem; font-weight: 650; color: #2c5543; }
+.farmer-customer-address { font-size: .9rem; color: #66756c; margin-top: .2rem; overflow-wrap: anywhere; }
+.farmer-status-badge { font-size: .78rem; padding: .45rem .55rem; white-space: nowrap; }
+.farmer-customer-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+.farmer-customer-detail { display: flex; flex-direction: column; gap: .2rem; padding: .7rem .75rem; border-radius: .8rem; background: #f5f8f5; min-width: 0; }
+.farmer-customer-detail span { color: #65736a; font-size: .84rem; }
+.farmer-customer-detail strong { color: #214f3b; font-size: 1.04rem; overflow-wrap: anywhere; }
+.farmer-rate-detail { grid-column: 1 / -1; background: #fff5df; }
+.farmer-rate-detail strong { color: #7b5100; }
+.farmer-customer-actions { display: flex; flex-direction: column; gap: .65rem; }
+.farmer-customer-actions .btn { min-height: 46px; border-radius: .8rem; font-weight: 750; }
+.farmer-view-action, .farmer-primary-action { background: #216747; border-color: #216747; color: #fff; min-height: 48px; border-radius: .85rem; font-weight: 800; padding: .75rem 1.1rem; }
+.farmer-view-action:hover, .farmer-primary-action:hover { background: #174d35; border-color: #174d35; color: #fff; }
+.farmer-secondary-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+.farmer-empty-state { text-align: center; padding: 3rem 1rem; }
+.farmer-empty-icon { display: block; font-size: 3rem; margin-bottom: .5rem; }
+.farmer-empty-state h5 { font-weight: 800; }
+.farmer-empty-state p { color: #6b776f; }
+@media (max-width: 575.98px) {
+  .farmer-customer-panel > .card-body { padding: .9rem; }
+  .farmer-customer-grid > [class*="col-"] { width: 100%; }
+  .farmer-customer-name { font-size: 1.12rem; }
+  .farmer-customer-detail strong { font-size: 1rem; }
+  .farmer-page-title { margin-bottom: .25rem; }
+  .farmer-customer-actions .btn { min-height: 50px; }
+}

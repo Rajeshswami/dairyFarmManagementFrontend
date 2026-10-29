@@ -114,19 +114,19 @@ export default function MilkProductionForm({
         <Modal.Header closeButton>
           <Modal.Title>
             {production
-              ? 'Edit Milk Production'
-              : 'Add Milk Production'}
+              ? 'दूध उत्पादन बदलें / Edit Production'
+              : 'दूध दर्ज करें / Add Production'}
           </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
           <Row className="g-3">
 
-            {/* Animal */}
+            {/* पशु चुनें / Animal */}
             <Col md={6}>
               <Form.Group>
                 <Form.Label>
-                  Animal *
+                  पशु चुनें / Animal *
                 </Form.Label>
 
                 <Form.Select
@@ -136,7 +136,7 @@ export default function MilkProductionForm({
                   required
                 >
                   <option value="">
-                    Select animal
+                    पशु चुनें / Select animal
                   </option>
 
                   {animals.map((animal) => (
@@ -158,7 +158,7 @@ export default function MilkProductionForm({
             <Col md={6}>
               <Form.Group>
                 <Form.Label>
-                  Production Date *
+                  तारीख / Production Date *
                 </Form.Label>
 
                 <Form.Control
@@ -175,7 +175,7 @@ export default function MilkProductionForm({
             <Col md={6}>
               <Form.Group>
                 <Form.Label>
-                  Morning Milk (Liters)
+                  सुबह का दूध / Morning Milk (Liters)
                 </Form.Label>
 
                 <Form.Control
@@ -194,7 +194,7 @@ export default function MilkProductionForm({
             <Col md={6}>
               <Form.Group>
                 <Form.Label>
-                  Evening Milk (Liters)
+                  शाम का दूध / Evening Milk (Liters)
                 </Form.Label>
 
                 <Form.Control
@@ -213,7 +213,7 @@ export default function MilkProductionForm({
             <Col md={12}>
               <div className="p-3 bg-light rounded">
                 <div className="text-muted small">
-                  Total Production
+                  कुल दूध / Total Production
                 </div>
 
                 <div className="fs-3 fw-bold">
@@ -235,7 +235,7 @@ export default function MilkProductionForm({
                   name="note"
                   value={form.note}
                   onChange={handleChange}
-                  placeholder="Optional note..."
+                  placeholder="वैकल्पिक नोट / Optional note..."
                 />
               </Form.Group>
             </Col>
@@ -261,7 +261,7 @@ export default function MilkProductionForm({
               ? 'Saving...'
               : production
                 ? 'Update Production'
-                : 'Save Production'}
+                : 'दूध सेव करें / Save Production'}
           </Button>
         </Modal.Footer>
       </Form>

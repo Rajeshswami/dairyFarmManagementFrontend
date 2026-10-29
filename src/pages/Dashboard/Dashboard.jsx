@@ -10,6 +10,7 @@ import {
 import { getDashboardApi } from '../../api/dashboard.api';
 
 import StatCard from '../../components/StatCard';
+import './dashboard-phase7.css';
 
 const monthNames = [
   'January',
@@ -45,6 +46,14 @@ function formatCurrency(value) {
 }
 
 export default function Dashboard() {
+  const [language, setLanguage] = useState(() => localStorage.getItem("dairy-app-language") || "hi");
+
+  useEffect(() => {
+    const syncLanguage = (event) => setLanguage(event.detail || localStorage.getItem("dairy-app-language") || "hi");
+    window.addEventListener("dairy-language-change", syncLanguage);
+    return () => window.removeEventListener("dairy-language-change", syncLanguage);
+  }, []);
+
   const now = new Date();
 
   const [year, setYear] = useState(
@@ -143,21 +152,21 @@ export default function Dashboard() {
     <div className="dashboard-page">
       <section className="page-hero dashboard-hero">
         <div className="page-hero-copy">
-          <span className="eyebrow">YOUR FARM AT A GLANCE</span>
-          <h1>Good work starts with good records.</h1>
-          <p>Track milk production, deliveries, customer billing, and collections from one clear overview.</p>
+          <span className="eyebrow">{language === "hi" ? "आपके डेयरी का हाल" : "YOUR FARM AT A GLANCE"}</span>
+          <h1>{language === "hi" ? "आपके डेयरी का हिसाब, एक जगह।" : "Good work starts with good records."}</h1>
+          <p>{language === "hi" ? "दूध, ग्राहक, बिल और जमा पैसे का हिसाब आसानी से देखें।" : "Track milk production, deliveries, customer billing, and collections from one clear overview."}</p>
         </div>
-        <div className="page-hero-period"><span>Reporting period</span><strong>{monthNames[month - 1]} {year}</strong><small>Use the filters below to review another month.</small></div>
+        <div className="page-hero-period"><span>{language === "hi" ? "महीना चुनें" : "Reporting period"}</span><strong>{monthNames[month - 1]} {year}</strong><small>{language === "hi" ? "दूसरे महीने का हिसाब देखने के लिए नीचे चुनें।" : "Use the filters below to review another month."}</small></div>
       </section>
       {/* Page heading */}
       <div className="page-heading">
         <div>
           <h2>
-            Farm overview
+            {language === "hi" ? "डेयरी का हिसाब" : "Farm overview"}
           </h2>
 
           <p className="text-muted mb-0">
-            Overview of farm operations
+            {language === "hi" ? "आज के काम की जानकारी" : "Overview of farm operations"}
           </p>
         </div>
 
@@ -210,14 +219,12 @@ export default function Dashboard() {
       </div>
 
       {/* Customers */}
-      <h5 className="section-title">
-        Customers
-      </h5>
+      <h5 className="section-title"><span>{language === "hi" ? "ग्राहक" : "Customers"}</span><small>{language === "hi" ? "आपके ग्राहक" : "Your customer base"}</small></h5>
 
       <Row className="g-3 mb-4">
         <Col md={6} xl={3}>
           <StatCard
-            title="Total Customers"
+            title={language === "hi" ? "कुल ग्राहक" : "Total Customers"}
             value={formatNumber(
               customers.total
             )}
@@ -226,7 +233,7 @@ export default function Dashboard() {
 
         <Col md={6} xl={3}>
           <StatCard
-            title="Active Customers"
+            title={language === "hi" ? "चालू ग्राहक" : "Active Customers"}
             value={formatNumber(
               customers.active
             )}
@@ -235,14 +242,12 @@ export default function Dashboard() {
       </Row>
 
       {/* Animals */}
-      <h5 className="section-title">
-        Animals
-      </h5>
+      <h5 className="section-title"><span>{language === "hi" ? "पशु" : "Animals"}</span><small>{language === "hi" ? "डेयरी के पशु" : "Your dairy animals"}</small></h5>
 
       <Row className="g-3 mb-4">
         <Col md={6} xl={3}>
           <StatCard
-            title="Total Animals"
+            title={language === "hi" ? "कुल पशु" : "Total Animals"}
             value={formatNumber(
               animals.total
             )}
@@ -251,7 +256,7 @@ export default function Dashboard() {
 
         <Col md={6} xl={3}>
           <StatCard
-            title="Active Animals"
+            title={language === "hi" ? "चालू पशु" : "Active Animals"}
             value={formatNumber(
               animals.active
             )}
@@ -260,24 +265,22 @@ export default function Dashboard() {
       </Row>
 
       {/* Milk */}
-      <h5 className="section-title">
-        Milk Operations
-      </h5>
+      <h5 className="section-title"><span>{language === "hi" ? "दूध का हिसाब" : "Milk operations"}</span><small>{language === "hi" ? "उत्पादन और सप्लाई" : "Production and delivery"}</small></h5>
 
       <Row className="g-3 mb-4">
         <Col md={6} xl={3}>
           <StatCard
-            title="Production"
+            title={language === "hi" ? "कुल उत्पादन" : "Production"}
             value={`${formatNumber(
               production.totalLiters
             )} L`}
-            subtitle="Total milk produced"
+            subtitle={language === "hi" ? "कुल उत्पादित दूध" : "Total milk produced"}
           />
         </Col>
 
         <Col md={6} xl={3}>
           <StatCard
-            title="Production - Morning"
+            title={language === "hi" ? "सुबह का उत्पादन" : "Production - Morning"}
             value={`${formatNumber(
               production.morningLiters
             )} L`}
@@ -286,7 +289,7 @@ export default function Dashboard() {
 
         <Col md={6} xl={3}>
           <StatCard
-            title="Production - Evening"
+            title={language === "hi" ? "शाम का उत्पादन" : "Production - Evening"}
             value={`${formatNumber(
               production.eveningLiters
             )} L`}
@@ -295,7 +298,7 @@ export default function Dashboard() {
 
         <Col md={6} xl={3}>
           <StatCard
-            title="Delivered"
+            title={language === "hi" ? "सप्लाई किया दूध" : "Delivered"}
             value={`${formatNumber(
               delivery.totalLiters
             )} L`}
@@ -307,14 +310,12 @@ export default function Dashboard() {
       </Row>
 
       {/* Financial */}
-      <h5 className="section-title">
-        Financial
-      </h5>
+      <h5 className="section-title"><span>{language === "hi" ? "पैसों का हिसाब" : "Finances"}</span><small>{language === "hi" ? "बिल, जमा और बाकी" : "Billing, collection and balance"}</small></h5>
 
       <Row className="g-3">
         <Col md={6} xl={3}>
           <StatCard
-            title="Total Billing"
+            title={language === "hi" ? "कुल बिल" : "Total Billing"}
             value={formatCurrency(
               billing.totalBilling
             )}
@@ -323,7 +324,7 @@ export default function Dashboard() {
 
         <Col md={6} xl={3}>
           <StatCard
-            title="Collected"
+            title={language === "hi" ? "जमा पैसे" : "Collected"}
             value={formatCurrency(
               billing.totalCollected
             )}
@@ -332,7 +333,7 @@ export default function Dashboard() {
 
         <Col md={6} xl={3}>
           <StatCard
-            title="Pending"
+            title={language === "hi" ? "बाकी पैसे" : "Pending"}
             value={formatCurrency(
               billing.totalPending
             )}
@@ -341,7 +342,7 @@ export default function Dashboard() {
 
         <Col md={6} xl={3}>
           <StatCard
-            title="Paid Customers"
+            title={language === "hi" ? "भुगतान कर चुके ग्राहक" : "Paid Customers"}
             value={formatNumber(
               payments.paidCustomers
             )}

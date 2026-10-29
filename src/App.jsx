@@ -12,6 +12,8 @@ import MilkDelivery from "./pages/MilkDelivery/MilkDelivery";
 import Bills from "./pages/Bills/Bills";
 import Payments from "./pages/Payments/Payments";
 import Reports from './pages/Reports/Reports';
+import VoiceAssistant from "./pages/VoiceAssistant/VoiceAssistant";
+import "./agrocontrol-theme.css";
 function Placeholder({ title }) {
   return (
     <div>
@@ -45,6 +47,7 @@ export default function App() {
 
           <Route path="/payments" element={<Payments />} />
           <Route path="/reports" element={<Reports/>} />
+          <Route path="/voice-assistant" element={<VoiceAssistant />} />
         </Route>
       </Route>
     </Routes>

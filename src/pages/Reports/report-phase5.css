@@ -1,0 +1,79 @@
+/* Phase 5: Reports page visual refresh. Styling only; report logic and APIs remain unchanged. */
+.report-phase5 {
+  --report-green: #0f5b50;
+  --report-green-dark: #104b43;
+  --report-mint: #eaf5f0;
+  --report-border: #dce9e3;
+  padding: clamp(1rem, 2.2vw, 2rem);
+  color: #183b36;
+}
+.report-phase5__heading { gap: 1rem; }
+.report-phase5__heading h2 {
+  color: var(--report-green-dark);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+}
+.report-phase5 .text-muted { color: #687e78 !important; }
+.report-phase5 .card {
+  border: 1px solid var(--report-border) !important;
+  border-radius: 1.15rem;
+  box-shadow: 0 8px 24px rgba(21, 72, 61, 0.045) !important;
+  overflow: hidden;
+}
+.report-phase5 .card-body { padding: clamp(1rem, 2vw, 1.5rem); }
+.report-phase5 .fs-4 { color: var(--report-green-dark); font-size: clamp(1.35rem, 2vw, 1.8rem) !important; }
+.report-phase5 .btn {
+  min-height: 44px;
+  border-radius: .75rem;
+  padding: .65rem 1rem;
+  font-weight: 650;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.report-phase5 .btn:hover { transform: translateY(-1px); }
+.report-phase5 .btn-primary {
+  background: var(--report-green);
+  border-color: var(--report-green);
+}
+.report-phase5 .btn-primary:hover,
+.report-phase5 .btn-primary:focus {
+  background: var(--report-green-dark);
+  border-color: var(--report-green-dark);
+}
+.report-phase5 .btn-outline-primary { color: var(--report-green); border-color: #9abfb2; }
+.report-phase5 .btn-outline-primary:hover { color: #fff; background: var(--report-green); border-color: var(--report-green); }
+.report-phase5 .form-label { color: #294c45; font-weight: 650; margin-bottom: .5rem; }
+.report-phase5 .form-control,
+.report-phase5 .form-select {
+  min-height: 46px;
+  border-color: #d4e3dc;
+  border-radius: .75rem;
+  color: #203f39;
+  background-color: #fff;
+}
+.report-phase5 .form-control:focus,
+.report-phase5 .form-select:focus {
+  border-color: #58ad96;
+  box-shadow: 0 0 0 .2rem rgba(47, 145, 116, .13);
+}
+.report-phase5 .table { margin-bottom: 0; vertical-align: middle; }
+.report-phase5 .table thead th {
+  padding: .9rem .85rem;
+  color: #31584f;
+  background: var(--report-mint);
+  border-bottom-color: #d7e8df;
+  font-size: .9rem;
+  white-space: nowrap;
+}
+.report-phase5 .table tbody td { padding: .85rem; border-color: #edf2ef; }
+.report-phase5 .table tbody tr:last-child td { border-bottom: 0; }
+.report-phase5 .table-responsive { border-radius: .8rem; }
+.report-phase5 h5 { color: var(--report-green-dark); font-weight: 750; }
+.report-phase5 .alert { border-radius: .85rem; }
+@media (max-width: 767.98px) {
+  .report-phase5 { padding: .85rem; }
+  .report-phase5 .card-body { padding: 1rem; }
+  .report-phase5 .d-flex.justify-content-end { justify-content: stretch !important; flex-wrap: wrap; }
+  .report-phase5 .d-flex.justify-content-end .btn { flex: 1 1 30%; }
+  .report-phase5 .btn { white-space: normal; }
+}
