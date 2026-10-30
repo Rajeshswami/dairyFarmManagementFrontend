@@ -1,0 +1,187 @@
+/* Consistent soft-card treatment for every non-dashboard module.
+   Loaded last so legacy page-level styles cannot reintroduce the old theme. */
+:root {
+  --dairy-forest: #0b4632;
+  --dairy-forest-deep: #073b2b;
+  --dairy-cream: #fff1c5;
+  --dairy-canvas: #f7f9f6;
+  --dairy-card: #fff;
+  --dairy-ink: #17251f;
+  --dairy-muted: #718078;
+  --dairy-line: #e8eee9;
+  --dairy-shadow: 0 10px 28px rgba(18,55,39,.075);
+}
+
+/* Shared page rhythm and headings */
+.customer-phase8, .animal-phase9, .mp-page, .farmer-delivery-page,
+.billing-page, .farmer-payments-page, .farmer-reports-page,
+.voice-assistant-page, .voice-page, .page-content > .container-fluid {
+  color: var(--dairy-ink);
+}
+.page-content h1, .page-content h2, .page-content h3,
+.page-content h4, .page-content h5 { color: #172b21; letter-spacing: -.025em; }
+.page-content .text-muted { color: #718078 !important; }
+.page-content .card, .page-content .modal-content,
+.page-content .filter-card, .page-content .state-panel,
+.page-content .billing-table-card, .page-content .mp-filter-card,
+.page-content .mp-table-card, .page-content .farmer-customer-panel,
+.page-content .farmer-payment-card, .page-content .farmer-reports-card,
+.page-content .voice-console, .page-content .voice-history-card,
+.page-content .voice-examples-card, .page-content .guided-delivery-panel {
+  background: #fff !important;
+  border: 1px solid var(--dairy-line) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--dairy-shadow) !important;
+}
+
+/* Hero / page headers */
+.farmer-page-title, .mp-hero, .farmer-delivery-hero,
+.page-hero, .farmer-payment-hero, .farmer-reports-hero,
+.voice-hero {
+  border-radius: 22px !important;
+  border: 1px solid rgba(11,70,50,.07) !important;
+  box-shadow: 0 8px 24px rgba(18,55,39,.06) !important;
+}
+.page-hero, .mp-hero, .farmer-delivery-hero, .farmer-payment-hero,
+.farmer-reports-hero, .voice-hero {
+  background: #fff !important;
+}
+
+/* Summary and metric cards: solid pastel surfaces, never transparent */
+.customer-overview-card, .mp-summary-card, .farmer-summary-card,
+.billing-metric-grid > *, .farmer-payment-summary,
+.farmer-report-summary-card {
+  border: 1px solid rgba(11,70,50,.055) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 7px 20px rgba(30,62,45,.055) !important;
+}
+.customer-overview-total, .mp-summary-card.mp-total,
+.farmer-summary-card.total-summary { background: #e1f4e7 !important; }
+.customer-overview-active, .mp-summary-card.mp-morning,
+.farmer-summary-card.morning-summary,
+.farmer-payment-summary--green { background: #fff1c5 !important; }
+.customer-overview-inactive, .mp-summary-card.mp-evening,
+.farmer-summary-card.evening-summary,
+.farmer-payment-summary--blue { background: #dcecff !important; }
+
+/* Customer / animal cards */
+.farmer-customer-panel, .farmer-customer-card,
+.animal-phase9 .card, .customer-phase8 .card {
+  background: #fff !important;
+  border: 1px solid var(--dairy-line) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 7px 22px rgba(18,55,39,.06) !important;
+}
+.farmer-customer-avatar, .guided-customer-avatar,
+.farmer-payment-hero-icon, .farmer-reports-hero-icon,
+.voice-history-icon, .voice-console-top .voice-cow-illustration {
+  border-radius: 16px !important;
+  background: #eaf2ee !important;
+  color: var(--dairy-forest) !important;
+}
+
+/* Delivery quantity blocks and quick selections */
+.farmer-quantity-block, .farmer-exact-quantity,
+.farmer-quick-quantities, .farmer-delivery-toolbar,
+.farmer-delivery-status {
+  border-radius: 16px !important;
+}
+.farmer-quantity-block { background: #fff !important; border: 1px solid var(--dairy-line) !important; }
+.farmer-quick-quantities button, .farmer-record-button,
+.farmer-save-all, .farmer-primary-action, .animal-add-btn,
+.farmer-payment-primary, .farmer-generate-report {
+  border-radius: 13px !important;
+  font-weight: 750 !important;
+}
+.farmer-record-button, .farmer-save-all, .farmer-primary-action,
+.farmer-payment-primary, .farmer-generate-report {
+  background: var(--dairy-forest) !important;
+  border-color: var(--dairy-forest) !important;
+  color: #fff !important;
+}
+
+/* Tables across customers, animals, production, billing, payments, reports */
+.page-content .table-responsive {
+  overflow: auto;
+  border: 1px solid var(--dairy-line) !important;
+  border-radius: 17px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 18px rgba(18,55,39,.04);
+}
+.page-content .table { margin-bottom: 0; }
+.page-content .table thead th {
+  background: #edf4ef !important;
+  color: #385346 !important;
+  border-color: #e3ece5 !important;
+  padding: 13px 14px !important;
+  font-size: 12px;
+  font-weight: 800;
+}
+.page-content .table tbody td {
+  padding: 12px 14px !important;
+  border-color: #edf1ed !important;
+  color: #33453b;
+  vertical-align: middle;
+}
+.page-content .table tbody tr:hover > * { background: #f7faf7 !important; }
+
+/* Forms and filters */
+.page-content .form-label, .farmer-field-label,
+.farmer-large-label, .voice-field-label {
+  color: #42594c !important;
+  font-size: 12px;
+  font-weight: 750 !important;
+}
+.page-content .form-control, .page-content .form-select,
+.page-content .input-group-text {
+  background-color: #fff !important;
+  border: 1px solid #dfe9e1 !important;
+  border-radius: 12px !important;
+  min-height: 43px;
+  color: #263b2f;
+}
+.page-content .form-control:focus, .page-content .form-select:focus {
+  border-color: #83aa91 !important;
+  box-shadow: 0 0 0 .2rem rgba(11,70,50,.11) !important;
+}
+
+/* Voice assistant: friendly, opaque panels and clear confirmation actions */
+.voice-console, .voice-history-card, .voice-examples-card,
+.guided-delivery-panel, .voice-confirm-box {
+  background: #fff !important;
+  border: 1px solid var(--dairy-line) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--dairy-shadow) !important;
+}
+.voice-confirm-box { background: #fff8df !important; border-color: #f3e3ad !important; }
+.guided-customer-chip { background: #eaf2ee !important; border: 1px solid #dce9df !important; border-radius: 14px !important; }
+.voice-example { background: #f3f7f3 !important; border-radius: 14px !important; }
+
+/* Reports tabs and billing/payment statuses */
+.farmer-report-tab { border-radius: 12px !important; }
+.farmer-report-tab.active, .farmer-report-tab[aria-selected="true"] {
+  background: var(--dairy-cream) !important; color: var(--dairy-forest) !important;
+  border-color: #f0dfa5 !important;
+}
+.billing-status-filter { background: #f1f6f2 !important; border-radius: 13px !important; }
+
+/* Common controls */
+.page-content .btn { border-radius: 12px !important; font-weight: 700 !important; }
+.page-content .btn-success, .page-content .btn-primary {
+  background: var(--dairy-forest) !important; border-color: var(--dairy-forest) !important;
+}
+.page-content .btn-outline-success, .page-content .btn-outline-primary {
+  color: var(--dairy-forest) !important; border-color: #a9c2b0 !important;
+}
+.page-content .badge { border-radius: 999px !important; padding: .45em .72em !important; }
+
+@media (max-width: 767.98px) {
+  .page-content .card, .page-content .filter-card,
+  .page-content .page-hero, .page-content .farmer-delivery-hero,
+  .page-content .farmer-payment-hero, .page-content .farmer-reports-hero,
+  .page-content .voice-hero { border-radius: 16px !important; }
+  .page-content .table thead th, .page-content .table tbody td { padding: 10px !important; }
+  .farmer-delivery-toolbar, .billing-toolbar, .farmer-payment-action-row {
+    align-items: stretch !important; flex-wrap: wrap !important;
+  }
+}

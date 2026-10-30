@@ -1,0 +1,57 @@
+/* FINAL THEME OVERRIDE — loaded last from main.jsx */
+:root {
+  --dairy-forest: #0B4632;
+  --dairy-forest-hover: #145A40;
+  --dairy-cream: #FFF1C5;
+  --dairy-canvas: #F7F9F6;
+  --dairy-pale-green: #EAF2EE;
+  --dairy-ink: #17372B;
+  --dairy-muted: #718078;
+  --dairy-border: #E3EAE5;
+  --dairy-shadow: 0 10px 28px rgba(11,70,50,.07);
+  --bs-primary: #0B4632;
+  --bs-primary-rgb: 11,70,50;
+  --bs-success: #0B4632;
+  --bs-success-rgb: 11,70,50;
+}
+html, body, #root { min-height:100%; }
+body, .app-layout, .main-area, .page-content { background:#F7F9F6 !important; color:#17372B !important; }
+.sidebar { background:#0B4632 !important; color:#fff !important; border-right:1px solid rgba(255,255,255,.1) !important; box-shadow:8px 0 28px rgba(11,70,50,.10) !important; }
+.sidebar-brand { border-bottom:1px solid rgba(255,255,255,.14) !important; }
+.brand-icon { background:#FFF1C5 !important; color:#0B4632 !important; }
+.brand-title { color:#fff !important; }
+.brand-subtitle { color:#D1E0D7 !important; }
+.sidebar-nav::before { color:#B7CFC1 !important; }
+.sidebar-link { color:#E1ECE5 !important; border-radius:12px !important; }
+.sidebar-link:hover { background:rgba(255,255,255,.1) !important; color:#fff !important; }
+.sidebar-link.active, .sidebar a[aria-current="page"] { background:#FFF1C5 !important; border-color:#F4E2A8 !important; color:#0B4632 !important; box-shadow:0 6px 16px rgba(0,0,0,.12) !important; }
+.sidebar-link.active .sidebar-link-icon { background:rgba(11,70,50,.09) !important; color:#0B4632 !important; }
+.sidebar-link-icon { color:#E7F0E9 !important; }
+.main-area { background:#F7F9F6 !important; }
+.app-header { background:rgba(255,255,255,.97) !important; border-bottom:1px solid #E3EAE5 !important; box-shadow:0 4px 18px rgba(11,70,50,.035) !important; }
+.header-title h5, .page-heading h2, .page-content h1, .page-content h2, .page-content h3, .section-title { color:#0B4632 !important; }
+.header-title small, .page-heading p, .page-content .text-muted { color:#718078 !important; }
+.card, .stat-card, .farmer-payment-card, .mp-filter-card, .farmer-reports-card, .dashboard-card, .customer-card, .animal-card { background:#fff !important; border:1px solid #E3EAE5 !important; border-radius:18px !important; box-shadow:var(--dairy-shadow) !important; }
+.card-header { background:#fff !important; border-bottom:1px solid #E8EEE9 !important; }
+.stat-card-icon, .icon-circle, .dashboard-icon, .customer-icon, .animal-icon { background:#EAF2EE !important; color:#0B4632 !important; }
+.stat-title, .stat-card .text-muted { color:#718078 !important; }
+.stat-value, .stat-card h2, .stat-card h3 { color:#0B4632 !important; }
+.btn-success, .btn-primary, .farmer-payment-primary, .animal-add-btn, .voice-assistant-page .btn-primary, .voice-assistant-container .btn-primary { background:#0B4632 !important; border-color:#0B4632 !important; color:#fff !important; }
+.btn-success:hover, .btn-primary:hover, .farmer-payment-primary:hover, .animal-add-btn:hover { background:#145A40 !important; border-color:#145A40 !important; }
+.btn-warning { background:#FFF1C5 !important; border-color:#F0DFA8 !important; color:#0B4632 !important; }
+.btn-outline-success, .btn-outline-primary { color:#0B4632 !important; border-color:#B8CFC2 !important; }
+.form-control, .form-select { border:1px solid #DCE6DF !important; border-radius:11px !important; color:#17372B !important; }
+.form-control:focus, .form-select:focus { border-color:#77A68D !important; box-shadow:0 0 0 .22rem rgba(11,70,50,.12) !important; }
+.form-label { color:#345546 !important; }
+.table-responsive { border:1px solid #E3EAE5 !important; border-radius:15px !important; }
+.table thead th, .mp-page .mp-table-head th, .farmer-payment-table thead th { background:#F2F6F2 !important; color:#52695D !important; border-bottom-color:#E3EAE5 !important; }
+.table tbody td { color:#345246 !important; border-color:#EDF1EE !important; }
+.table tbody tr:hover > * { --bs-table-bg:#F6F9F6 !important; }
+.page-hero, .farmer-payment-hero, .mp-hero { background:linear-gradient(115deg,#FFF8E5 0%,#fff 58%,#F0F6F1 100%) !important; border:1px solid #EFE5C8 !important; border-radius:22px !important; }
+.page-hero h1, .farmer-payment-hero h1, .farmer-payment-hero h2, .mp-hero h1, .mp-hero h2 { color:#0B4632 !important; }
+.modal-content { border:1px solid #E3EAE5 !important; border-radius:20px !important; }
+.modal-header { background:#F7F9F6 !important; }
+.modal-title { color:#0B4632 !important; }
+.login-page { background:linear-gradient(135deg,#F7F9F6,#EDF4EF) !important; }
+.login-card { border:1px solid #E3EAE5 !important; box-shadow:0 18px 50px rgba(11,70,50,.10) !important; }
+@media(max-width:991.98px) { .sidebar { background:#0B4632 !important; } .main-area { margin-left:0 !important; width:100% !important; } }

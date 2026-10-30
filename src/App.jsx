@@ -13,7 +13,6 @@ import Bills from "./pages/Bills/Bills";
 import Payments from "./pages/Payments/Payments";
 import Reports from './pages/Reports/Reports';
 import VoiceAssistant from "./pages/VoiceAssistant/VoiceAssistant";
-import "./agrocontrol-theme.css";
 function Placeholder({ title }) {
   return (
     <div>

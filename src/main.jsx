@@ -26,3 +26,11 @@ ReactDOM.createRoot(
     </BrowserRouter>
   </React.StrictMode>
 );
+// Load the final visual theme after Bootstrap, legacy global CSS, and page CSS.
+import './modern-organic-palette.css';
+
+// Reference-inspired solid pastel card system; intentionally loaded last.
+import './soft-card-dairy-theme.css';
+
+// Apply the shared soft-card design consistently to every module.
+import './soft-card-pages.css';
